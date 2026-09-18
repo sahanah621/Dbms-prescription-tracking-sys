@@ -14,85 +14,212 @@ A comprehensive, full-stack **Database Management System (DBMS)** engineered to 
 
 ## 📑 Table of Contents
 
-1. [System Architecture](#-system-architecture)
-2. [Database Design & Schematics](#-database-design--schematics)
+1. [System Architecture](#1-system-architecture)
+2. [Technology Stack](#2-technology-stack)
+   - [Visual Technology Badge Wall](#visual-technology-badge-wall)
+     - [Frontend & Presentation Architecture](#frontend--presentation-architecture)
+     - [Backend Core & REST Runtime](#backend-core--rest-runtime)
+     - [Enterprise Database & Storage Architecture](#enterprise-database--storage-architecture)
+     - [Database Intelligence & PL/SQL Engine](#database-intelligence--plsql-engine)
+     - [Infrastructure, Tooling & Verification](#infrastructure-tooling--verification)
+3. [Database Design & Workflows](#3-database-design--workflows)
+   - [Clinical Dispensation & Verification Flowchart](#clinical-dispensation--verification-flowchart)
    - [Entity-Relationship (ER) Diagram](#entity-relationship-er-diagram)
    - [Prescription & Order Lifecycle Sequence](#prescription--order-lifecycle-sequence)
-3. [Technology Stack](#-technology-stack)
-4. [Key Features & Modules](#-key-features--modules)
-5. [Database Implementation (PL/SQL)](#-database-implementation-plsql)
+4. [Key Features & Modules](#4-key-features--modules)
+5. [Database Implementation (PL/SQL)](#5-database-implementation-plsql)
    - [Tables & Constraints](#tables--constraints)
    - [Stored Procedures](#stored-procedures)
    - [Database Triggers](#database-triggers)
    - [Stored Functions](#stored-functions)
-6. [REST API Architecture](#-rest-api-architecture)
-7. [Getting Started & Installation](#-getting-started--installation)
+6. [REST API Architecture](#6-rest-api-architecture)
+7. [Getting Started & Installation](#7-getting-started--installation)
    - [Prerequisites](#prerequisites)
    - [1. Database Configuration](#1-database-configuration)
    - [2. Backend Setup](#2-backend-setup)
    - [3. Frontend Setup](#3-frontend-setup)
-8. [Project Structure](#-project-structure)
-9. [Contributing & Authors](#-contributing--authors)
+8. [Project Structure](#8-project-structure)
+9. [Contributors](#9-contributors)
 
 ---
 
-## 🏛️ System Architecture
+## 1. System Architecture
 
-The project implements an enterprise-grade **3-Tier Architecture** separating presentation, business logic, and transactional persistence:
+The project implements an enterprise-grade **3-Tier Architecture** separating presentation, business logic, and transactional persistence. The diagram below details the data flow between all subsystem tiers:
 
 ```mermaid
 flowchart TD
-    subgraph Client_Layer["🖥️ Client Presentation Layer"]
-        UI["React 19 SPA (Vite + Tailwind CSS)"]
-        State["Client State & UI Modals"]
-        Router["Tab / Navigation Router"]
-        API_Client["Fetch API Client (REST)"]
-        UI --> State
-        State --> API_Client
-        Router --> UI
+    %% Styling Class Definitions
+    classDef clientNode fill:#0284c7,stroke:#38bdf8,stroke-width:2px,color:#ffffff,font-weight:bold;
+    classDef apiNode fill:#0f766e,stroke:#2dd4bf,stroke-width:2px,color:#ffffff,font-weight:bold;
+    classDef dbNode fill:#991b1b,stroke:#f87171,stroke-width:2px,color:#ffffff,font-weight:bold;
+    classDef plsqlNode fill:#6b21a8,stroke:#c084fc,stroke-width:2px,color:#ffffff,font-weight:bold;
+    classDef proxyNode fill:#1e293b,stroke:#64748b,stroke-width:2px,color:#38bdf8,font-weight:bold;
+
+    subgraph Client_Layer["🖥️ Tier 1: Client Presentation Layer (React 19 + Vite)"]
+        UI["React 19 SPA<br/>Tailwind CSS & Lucide Icons"]:::clientNode
+        State["Client State Management<br/>Modals, Forms & Tabs"]:::clientNode
+        API_Client["Centralized REST Client<br/>api/client.js"]:::clientNode
+        UI <--> State
+        State <--> API_Client
     end
 
-    subgraph API_Layer["⚙️ Application & Business Logic Layer (FastAPI)"]
-        Proxy["Vite Dev Server Proxy (:5173)"]
-        FastAPI["FastAPI Application (:8000)"]
-        CORS["CORS Middleware"]
-        Pydantic["Pydantic Validation Schemas"]
-        Routers["API Routers
-(Prescriptions, Patients, Facilities, Bills, Supply Chain)"]
-        Services["Service Layer (Business Logic)"]
-        Driver["python-oracledb Driver (Thin / Thick Mode)"]
+    subgraph Gateway_Layer["🌐 Network Gateway"]
+        Proxy["Vite Dev Server Proxy (:5173)<br/>Route: /api/* ➜ 127.0.0.1:8000"]:::proxyNode
+    end
 
-        API_Client -- "/api/* requests" --> Proxy
-        Proxy --> FastAPI
+    subgraph API_Layer["⚙️ Tier 2: Application & Business Logic Layer (FastAPI)"]
+        FastAPI["FastAPI Engine (:8000)<br/>OpenAPI 3.1 & Swagger"]:::apiNode
+        CORS["CORS Security Middleware<br/>Allowed Origins Enforcement"]:::apiNode
+        Routers["Modular API Routers<br/>Prescriptions, Patients, Facilities, Bills, Supply Chain"]:::apiNode
+        Pydantic["Pydantic v2 Schemas<br/>Strict Request/Response Validation"]:::apiNode
+        Services["Service Layer<br/>Transactional Business Logic"]:::apiNode
+        Driver["python-oracledb Driver<br/>Thin Mode / Thick Mode OCI"]:::apiNode
+
         FastAPI --> CORS
         CORS --> Routers
-        Routers --> Pydantic
+        Routers <--> Pydantic
         Routers --> Services
         Services --> Driver
     end
 
-    subgraph DB_Layer["💾 Transactional Persistence Layer (Oracle 21c XE)"]
-        OracleDB[("Oracle Database (XEPDB1)")]
-        Tables["Relational Tables & Foreign Keys"]
-        Procedures["PL/SQL Stored Procedures (CRUD)"]
-        Triggers["PL/SQL Triggers (Integrity & Rules)"]
-        Functions["PL/SQL Functions (Aggregates & Pricing)"]
+    subgraph DB_Layer["💾 Tier 3: Transactional Persistence Layer (Oracle 21c XE)"]
+        OracleDB[("Oracle Database 21c XE<br/>Service: XEPDB1 (:1521)")]:::dbNode
+        Tables["14 Normalized Relational Tables<br/>Referential Integrity & Check Constraints"]:::dbNode
+        Procedures["PL/SQL Stored Procedures<br/>Atomically Encapsulated CRUD"]:::plsqlNode
+        Triggers["PL/SQL Triggers<br/>Chronological & Status Validation Rules"]:::plsqlNode
+        Functions["PL/SQL Functions<br/>Aggregates, Dynamic Pricing & Stock Queries"]:::plsqlNode
 
-        Driver -- "SQL*Net / TCP (:1521)" --> OracleDB
         OracleDB --- Tables
         OracleDB --- Procedures
         OracleDB --- Triggers
         OracleDB --- Functions
     end
+
+    API_Client -- "HTTP /api/*" --> Proxy
+    Proxy -- "Reverse Proxy" --> FastAPI
+    Driver -- "SQL*Net / TCP Protocol" --> OracleDB
 ```
 
 ---
 
-## 📊 Database Design & Schematics
+## 2. Technology Stack
+
+### Visual Technology Badge Wall
+
+#### Frontend & Presentation Architecture
+[![REACT](https://img.shields.io/badge/REACT-19.2.8-61DAFB?style=for-the-badge&logo=react&logoColor=black)](https://react.dev/)
+[![VITE](https://img.shields.io/badge/VITE-8.3.0-646CFF?style=for-the-badge&logo=vite&logoColor=white)](https://vite.dev/)
+[![TAILWIND CSS](https://img.shields.io/badge/TAILWIND_CSS-4.3.3-06B6D4?style=for-the-badge&logo=tailwindcss&logoColor=white)](https://tailwindcss.com/)
+[![JAVASCRIPT](https://img.shields.io/badge/JAVASCRIPT-ES6+%20%2F%20JSX-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black)](https://developer.mozilla.org/en-US/docs/Web/JavaScript)
+[![LUCIDE REACT](https://img.shields.io/badge/LUCIDE_REACT-1.46.0-F43F5E?style=for-the-badge&logo=lucide&logoColor=white)](https://lucide.dev/)
+[![OXLINT](https://img.shields.io/badge/OXLINT-1.81.0-F59E0B?style=for-the-badge)](https://oxc.rs/)
+[![HTML5](https://img.shields.io/badge/HTML5-SEMANTIC_UI-E34F26?style=for-the-badge&logo=html5&logoColor=white)](https://html.spec.whatwg.org/)
+[![CSS3](https://img.shields.io/badge/CSS3-RESPONSIVE_SAAS-1572B6?style=for-the-badge&logo=css3&logoColor=white)](https://www.w3.org/Style/CSS/)
+
+#### Backend Core & REST Runtime
+[![PYTHON](https://img.shields.io/badge/PYTHON-3.10%2B%20%2F%203.11%2B-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://www.python.org/)
+[![FASTAPI](https://img.shields.io/badge/FASTAPI-0.115.0+-009688?style=for-the-badge&logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com/)
+[![UVICORN](https://img.shields.io/badge/UVICORN-0.30.0+_ASGI-2C3E50?style=for-the-badge&logo=uvicorn&logoColor=white)](https://www.uvicorn.org/)
+[![PYDANTIC](https://img.shields.io/badge/PYDANTIC-v2.0+_MODELS-E92063?style=for-the-badge&logo=pydantic&logoColor=white)](https://docs.pydantic.dev/)
+[![PYTHON-ORACLEDB](https://img.shields.io/badge/PYTHON--ORACLEDB-2.0+_DRIVER-F80000?style=for-the-badge)](https://oracle.github.io/python-oracledb/)
+[![REST APIS](https://img.shields.io/badge/REST_APIS-MICRO--ROUTING-0284C7?style=for-the-badge)](#)
+[![PYTHON-DOTENV](https://img.shields.io/badge/PYTHON--DOTENV-1.0.0-4B5563?style=for-the-badge)](https://pypi.org/project/python-dotenv/)
+[![CORS](https://img.shields.io/badge/CORS-SECURE_ORIGINS-8B5CF6?style=for-the-badge)](#)
+
+#### Enterprise Database & Storage Architecture
+[![ORACLE 21C](https://img.shields.io/badge/ORACLE-21c_XE-F80000?style=for-the-badge&logo=oracle&logoColor=white)](https://www.oracle.com/database/technologies/xe-downloads.html)
+[![PDB SERVICE](https://img.shields.io/badge/PDB_SERVICE-XEPDB1-0284C7?style=for-the-badge)](#)
+[![ACID](https://img.shields.io/badge/ACID-STRICT_INTEGRITY-059669?style=for-the-badge)](#)
+[![RELATIONAL TABLES](https://img.shields.io/badge/RELATIONAL_SCHEMA-14_TABLES-4F46E5?style=for-the-badge)](#)
+[![CONSTRAINTS](https://img.shields.io/badge/CONSTRAINTS-PK_%2F_FK_%2F_CHECK-D97706?style=for-the-badge)](#)
+[![SEED DATA](https://img.shields.io/badge/SEED_RECORDS-50+_SAMPLE_DATA-10B981?style=for-the-badge)](#)
+
+#### Database Intelligence & PL/SQL Engine
+[![STORED PROCEDURES](https://img.shields.io/badge/PL%2FSQL-STORED_PROCEDURES-059669?style=for-the-badge)](#)
+[![ACTIVE TRIGGERS](https://img.shields.io/badge/TRIGGERS-4_VALIDATION_RULES-DC2626?style=for-the-badge)](#)
+[![STORED FUNCTIONS](https://img.shields.io/badge/FUNCTIONS-DYNAMIC_PRICING_%26_SUMS-7C3AED?style=for-the-badge)](#)
+[![TRANSACTIONS](https://img.shields.io/badge/ACID-SAVEPOINT_%26_ROLLBACK-B45309?style=for-the-badge)](#)
+[![CHRONO INTEGRITY](https://img.shields.io/badge/RULES-FUTURE_DATE_GUARDS-EF4444?style=for-the-badge)](#)
+
+#### Infrastructure, Tooling & Verification
+[![GIT](https://img.shields.io/badge/GIT-VERSION_CONTROL-F05032?style=for-the-badge&logo=git&logoColor=white)](https://git-scm.com/)
+[![SWAGGER UI](https://img.shields.io/badge/OPENAPI_3.1-SWAGGER_DOCS-85EA2D?style=for-the-badge&logo=openapi-initiative&logoColor=black)](http://127.0.0.1:8000/docs)
+[![VITE PROXY](https://img.shields.io/badge/NETWORK-PORT_5173_%E2%86%92_8000-0284C7?style=for-the-badge)](#)
+[![VERIFICATION](https://img.shields.io/badge/BUILD_%26_LINT-PASSING-10B981?style=for-the-badge)](#)
+[![SQL CLIENTS](https://img.shields.io/badge/SQL_CLIENTS-SQL*PLUS_%2F_SQL_DEV-374151?style=for-the-badge)](#)
+
+---
+
+## 3. Database Design & Workflows
+
+### Clinical Dispensation & Verification Flowchart
+
+The state-driven decision flowchart below models the clinical and inventory integrity lifecycle when a pharmacist processes a prescription dispensation:
+
+```mermaid
+flowchart TD
+    %% Custom Color Palette Definition
+    classDef startNode fill:#0284c7,stroke:#0369a1,stroke-width:2px,color:#ffffff,font-weight:bold;
+    classDef reqNode fill:#0369a1,stroke:#38bdf8,stroke-width:2px,color:#ffffff,font-weight:bold;
+    classDef govCheck fill:#9f1239,stroke:#e11d48,stroke-width:2px,color:#ffffff,font-weight:bold;
+    classDef stockCheck fill:#6b21a8,stroke:#a855f7,stroke-width:2px,color:#ffffff,font-weight:bold;
+    classDef rejectState fill:#881337,stroke:#f43f5e,stroke-width:2px,color:#ffffff,font-weight:bold;
+    classDef approveState fill:#581c87,stroke:#9333ea,stroke-width:2px,color:#ffffff,font-weight:bold;
+    classDef execState fill:#065f46,stroke:#10b981,stroke-width:2px,color:#ffffff,font-weight:bold;
+    classDef rollbackState fill:#78350f,stroke:#f59e0b,stroke-width:2px,color:#ffffff,font-weight:bold;
+    classDef telemetryNode fill:#1e293b,stroke:#475569,stroke-width:1px,color:#94a3b8;
+
+    Start["Pharmacist Initiates Clinical Dispensation<br/>(e.g., Rx #1015, Apollo Healthcare)"]:::startNode
+    ReqState["State: DISPENSATION_REQUESTED"]:::reqNode
+
+    GovCheck{"Clinical Governance Check<br/>Prescribing Doctor Valid &<br/>Patient Active in Relational DB"}:::govCheck
+
+    HttpError["HTTP 403 Forbidden / 422<br/>Unregistered Doctor or Inactive Patient"]:::rejectState
+    RejectState["State: DISPENSATION_REJECTED"]:::rejectState
+    RejectLog["Rejection Event Logged"]:::telemetryNode
+
+    StockCheck{"Dispensary Stock & Expiry Check<br/>Available Units ≥ Required Units &<br/>Batch Exp_Date > SYSDATE"}:::stockCheck
+
+    ApproveState["State: DISPENSATION_APPROVED"]:::approveState
+    ApproveLog["Approval Audit Log Generated"]:::telemetryNode
+
+    ExecTx["State: ATOMICALLY_EXECUTE_TRANSACTION<br/>INVENTORY Units Decremented & Bill Generated"]:::execState
+    Rollback["1-Click ACID Rollback<br/>ROLLBACK WORK TO PRE-DISPENSE"]:::rollbackState
+    CompleteState["State: DISPENSATION_COMPLETED<br/>Bill Emitted & Receipt Ready"]:::execState
+
+    Telemetry["Chained Telemetry & Security Audit Trail"]:::telemetryNode
+
+    %% Flow connections
+    Start --> ReqState
+    ReqState --> GovCheck
+
+    GovCheck -- "Referential Violation - Invalid Doctor / Patient" --> HttpError
+    HttpError --> RejectState
+    RejectState --> RejectLog
+
+    GovCheck -- "Referential Verification Passed" --> StockCheck
+
+    StockCheck -- "Stock Depleted / Expired Batch Detected" --> RejectState
+    StockCheck -- "Inventory Verification Confirmed" --> ApproveState
+
+    ApproveState --> ApproveLog
+    ApproveState --> ExecTx
+
+    ExecTx -- "Trigger Exception / Stock Dropped < 0" --> Rollback
+    ExecTx -- "All Constraints Satisfied" --> CompleteState
+
+    %% Telemetry linkages
+    ReqState -.-> Telemetry
+    RejectState -.-> Telemetry
+    CompleteState -.-> Telemetry
+```
+
+---
 
 ### Entity-Relationship (ER) Diagram
 
-The relational schema coordinates healthcare providers, clinical data, and B2B pharmaceutical logistics:
+The relational schema establishes strict referential integrity across medical practitioners, patients, hospital affiliations, pharmaceutical stock, and B2B supply logistics:
 
 ```mermaid
 erDiagram
@@ -282,25 +409,7 @@ sequenceDiagram
 
 ---
 
-## 🛠️ Technology Stack
-
-| Layer | Technology | Version | Purpose |
-| :--- | :--- | :--- | :--- |
-| **Frontend UI** | [React](https://react.dev/) | `^19.2.8` | Component-driven Single Page Application |
-| **Frontend Tooling** | [Vite](https://vite.dev/) | `^8.3.0` | Next-generation frontend build tool and dev server |
-| **Styling** | [Tailwind CSS](https://tailwindcss.com/) | `^4.3.3` | Utility-first, responsive CSS framework |
-| **Icons** | [Lucide React](https://lucide.dev/) | `^1.46.0` | Medical and dashboard SVG iconography |
-| **Linting** | [Oxlint](https://oxc.rs/) | `^1.81.0` | High-performance JavaScript/JSX linter |
-| **Backend API** | [FastAPI](https://fastapi.tiangolo.com/) | `>=0.115.0` | High-performance asynchronous Python REST framework |
-| **ASGI Server** | [Uvicorn](https://www.uvicorn.org/) | `>=0.30.0` | Lightning-fast ASGI web server |
-| **DB Connector** | [python-oracledb](https://oracle.github.io/python-oracledb/) | `>=2.0.0` | Official Oracle Database driver (Thin & Thick modes) |
-| **Validation** | [Pydantic v2](https://docs.pydantic.dev/) | `>=2.0.0` | Strict data parsing, request validation, and schema generation |
-| **Database Engine** | [Oracle 21c XE](https://www.oracle.com/database/technologies/xe-downloads.html) | `21c` | Enterprise relational database management system |
-| **Database Logic** | [PL/SQL](https://www.oracle.com/database/technologies/appdev/plsql.html) | Native | Stored procedures, integrity triggers, and aggregate functions |
-
----
-
-## ✨ Key Features & Modules
+## 4. Key Features & Modules
 
 - **📋 Prescription Administration**: Issue prescriptions linking verified doctors and patients, specify multi-drug dosages, intake frequency, and treatment duration.
 - **🧑‍⚕️ Doctor & Hospital Directory**: Manage medical practitioners, qualifications, years of experience, and hospital department affiliations.
@@ -312,7 +421,7 @@ sequenceDiagram
 
 ---
 
-## 🗄️ Database Implementation (PL/SQL)
+## 5. Database Implementation (PL/SQL)
 
 The database schema is organized under the `database/` directory and enforces relational integrity via PL/SQL scripts:
 
@@ -348,7 +457,7 @@ Reusable analytical functions:
 
 ---
 
-## 🌐 REST API Architecture
+## 6. REST API Architecture
 
 The FastAPI backend exposes modular, documented endpoints:
 
@@ -367,7 +476,7 @@ The FastAPI backend exposes modular, documented endpoints:
 
 ---
 
-## 🚀 Getting Started & Installation
+## 7. Getting Started & Installation
 
 ### Prerequisites
 
@@ -477,7 +586,7 @@ Ensure you have the following installed on your machine:
 
 ---
 
-## 📂 Project Structure
+## 8. Project Structure
 
 ```
 DBMS/
@@ -526,8 +635,13 @@ DBMS/
 
 ---
 
-## 👥 Contributing & Authors
+## 9. Contributors
 
-- **Author**: Sahana H ([@sahanah621](https://github.com/sahanah621))
+- **Sahana H** — [@sahanah621](https://github.com/sahanah621)
+- **Harshit Sharma** — [@harshitsharma-6854](https://github.com/harshitsharma-6854)
+- **Sreya** — [@sreyakj](https://github.com/sreyakj)
+
+---
+
 - **Repository**: [prescription-tracking-system](https://github.com/sahanah621/prescription-tracking-system)
 - **Academic Context**: Database Management Systems (DBMS) Course Project.
