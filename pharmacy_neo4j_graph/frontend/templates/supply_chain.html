@@ -1,0 +1,411 @@
+{% extends "base.html" %}
+
+{% block title %}Supply Chain Provenance Flow{% endblock %}
+{% block breadcrumb %}Supply Chain Traversal (Neo4j){% endblock %}
+
+{% block content %}
+<!-- Executive Healthcare Header -->
+<div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
+  <div>
+    <div class="d-flex align-items-center gap-2 mb-1">
+      <h3 class="fw-bold text-dark mb-0 d-flex align-items-center gap-2" style="letter-spacing: -0.5px;">
+        <span class="d-inline-flex align-items-center justify-content-center rounded-circle" style="width: 38px; height: 38px; background: rgba(14, 165, 233, 0.12); color: #0284c7; box-shadow: 0 2px 8px rgba(14, 165, 233, 0.2);">
+          <i class="fas fa-dolly-flatbed"></i>
+        </span>
+        Pharmaceutical Supply Chain Provenance
+      </h3>
+      <span class="badge border border-info border-opacity-40 text-info px-2.5 py-1" style="background: rgba(14, 165, 233, 0.1); font-size: 11px; font-weight: 700;">
+        <i class="fas fa-route me-1"></i> 5-Stage Provenance Traversal
+      </span>
+    </div>
+    <p class="text-secondary small mb-0">
+      Multi-hop directed pipeline tracing pharmaceutical provenance from industrial synthesis down to clinical patient delivery.
+    </p>
+  </div>
+</div>
+
+<!-- Medicine Selector Form Card -->
+<div class="graph-card mb-4 shadow-lg">
+  <div class="graph-card-header flex-wrap gap-2 py-3 px-3">
+    <div class="d-flex align-items-center gap-2">
+      <div class="graph-card-title mb-0 fs-6">
+        <i class="fas fa-filter text-info me-1.5"></i> Select Medicine to Trace
+      </div>
+      <span class="badge" style="background: rgba(2, 132, 199, 0.15); border: 1px solid rgba(2, 132, 199, 0.35); color: #7dd3fc; font-weight: 600; font-size: 11px; padding: 4px 8px; border-radius: 6px;">
+        Industrial Synthesis to Patient Delivery
+      </span>
+    </div>
+  </div>
+
+  <div class="graph-card-body p-3">
+    <!-- Curated Medicine Presets 4-Card Deck -->
+    <div class="mb-3.5">
+      <div class="d-flex justify-content-between align-items-center mb-2.5 flex-wrap gap-2">
+        <div class="d-flex align-items-center gap-2">
+          <span class="badge" style="background: rgba(255, 255, 255, 0.07); border: 1px solid rgba(255, 255, 255, 0.12); color: #cbd5e1; font-size: 11px; font-weight: 600; padding: 4px 8px; border-radius: 6px;">
+            <i class="fas fa-bolt text-warning me-1"></i> Quick Presets
+          </span>
+          <span class="text-light fw-bold small" style="letter-spacing: -0.2px;">Curated Provenance Tracers</span>
+        </div>
+        <span class="small text-secondary" style="font-size: 11.5px;">
+          <i class="fas fa-hand-pointer text-teal me-1"></i> Click preset to auto-trace pipeline
+        </span>
+      </div>
+
+      <div class="row g-2.5">
+        <!-- Preset 1: Atorva 20 -->
+        <div class="col-12 col-md-6 col-lg-3">
+          <div class="supply-preset-card preset-med-504 active" 
+               id="preset-med-504"
+               onclick="setMedicinePreset(504, 'preset-med-504')"
+               role="button" tabindex="0">
+            <div class="preset-icon-box" style="background: rgba(2, 132, 199, 0.12); border: 1px solid rgba(2, 132, 199, 0.28); color: #38bdf8;">
+              <i class="fas fa-pills"></i>
+            </div>
+            <div class="preset-info-box">
+              <div class="preset-title">Atorva 20 (504)</div>
+              <div class="preset-meta">
+                <span class="preset-type-pill" style="background: rgba(2, 132, 199, 0.15); color: #7dd3fc; border: 1px solid rgba(2, 132, 199, 0.35);">Statin</span>
+                <span class="preset-id-text">₹185.00 &bull; 18 Entities</span>
+              </div>
+            </div>
+            <div class="preset-action-arrow">
+              <i class="fas fa-arrow-right"></i>
+            </div>
+          </div>
+        </div>
+
+        <!-- Preset 2: Dolo 650 -->
+        <div class="col-12 col-md-6 col-lg-3">
+          <div class="supply-preset-card preset-med-501" 
+               id="preset-med-501"
+               onclick="setMedicinePreset(501, 'preset-med-501')"
+               role="button" tabindex="0">
+            <div class="preset-icon-box" style="background: rgba(16, 185, 129, 0.12); border: 1px solid rgba(16, 185, 129, 0.28); color: #34d399;">
+              <i class="fas fa-tablets"></i>
+            </div>
+            <div class="preset-info-box">
+              <div class="preset-title">Dolo 650 (501)</div>
+              <div class="preset-meta">
+                <span class="preset-type-pill" style="background: rgba(16, 185, 129, 0.15); color: #6ee7b7; border: 1px solid rgba(16, 185, 129, 0.35);">Analgesic</span>
+                <span class="preset-id-text">₹32.50 &bull; 19 Entities</span>
+              </div>
+            </div>
+            <div class="preset-action-arrow">
+              <i class="fas fa-arrow-right"></i>
+            </div>
+          </div>
+        </div>
+
+        <!-- Preset 3: Glycomet GP 1 -->
+        <div class="col-12 col-md-6 col-lg-3">
+          <div class="supply-preset-card preset-med-503" 
+               id="preset-med-503"
+               onclick="setMedicinePreset(503, 'preset-med-503')"
+               role="button" tabindex="0">
+            <div class="preset-icon-box" style="background: rgba(245, 158, 11, 0.12); border: 1px solid rgba(245, 158, 11, 0.28); color: #fbbf24;">
+              <i class="fas fa-capsules"></i>
+            </div>
+            <div class="preset-info-box">
+              <div class="preset-title">Glycomet GP 1 (503)</div>
+              <div class="preset-meta">
+                <span class="preset-type-pill" style="background: rgba(245, 158, 11, 0.15); color: #fde68a; border: 1px solid rgba(245, 158, 11, 0.35);">Diabetic</span>
+                <span class="preset-id-text">₹128.00 &bull; 16 Entities</span>
+              </div>
+            </div>
+            <div class="preset-action-arrow">
+              <i class="fas fa-arrow-right"></i>
+            </div>
+          </div>
+        </div>
+
+        <!-- Preset 4: Augmentin 625 -->
+        <div class="col-12 col-md-6 col-lg-3">
+          <div class="supply-preset-card preset-med-502" 
+               id="preset-med-502"
+               onclick="setMedicinePreset(502, 'preset-med-502')"
+               role="button" tabindex="0">
+            <div class="preset-icon-box" style="background: rgba(244, 63, 94, 0.12); border: 1px solid rgba(244, 63, 94, 0.28); color: #fb7185;">
+              <i class="fas fa-prescription-bottle-medical"></i>
+            </div>
+            <div class="preset-info-box">
+              <div class="preset-title">Augmentin 625 (502)</div>
+              <div class="preset-meta">
+                <span class="preset-type-pill" style="background: rgba(244, 63, 94, 0.15); color: #fecdd3; border: 1px solid rgba(244, 63, 94, 0.35);">Antibiotic</span>
+                <span class="preset-id-text">₹224.50 &bull; 16 Entities</span>
+              </div>
+            </div>
+            <div class="preset-action-arrow">
+              <i class="fas fa-arrow-right"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Manual Medicine Selector Row -->
+    <div class="row g-3 align-items-end pt-3 border-top" style="border-color: rgba(255, 255, 255, 0.08) !important;">
+      <div class="col-12 col-md-6">
+        <label class="form-label small fw-semibold text-light mb-1.5 d-flex align-items-center gap-1.5">
+          <i class="fas fa-pills text-teal"></i> Select Formulary Medicine &amp; Dosage Formulation
+        </label>
+        <select id="supply-chain-med-select" class="form-select explorer-select" onchange="onManualMedicineChange()" style="height: 42px; background: rgba(11, 19, 36, 0.85); border: 1px solid rgba(255, 255, 255, 0.12); color: #f8fafc; border-radius: 8px;">
+          {% for m in medicines %}
+          <option value="{{ m.Medicine_ID }}" {% if m.Medicine_ID == 504 %}selected{% endif %}>
+            {{ m.Name }} (ID: {{ m.Medicine_ID }} - ₹{{ m.Price }})
+          </option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <div class="col-12 col-md-3">
+        <button class="btn w-100 text-white fw-bold d-flex align-items-center justify-content-center gap-2" onclick="traceSupplyChain()" style="height: 42px; border-radius: 8px; background: linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%); border: none; box-shadow: 0 4px 14px rgba(14, 165, 233, 0.35); transition: all 0.2s ease;">
+          <i class="fas fa-play"></i> Trace Supply Chain Flow
+        </button>
+      </div>
+
+      <div class="col-12 col-md-3">
+        <button class="btn w-100 fw-bold d-flex align-items-center justify-content-center gap-2" id="btn-animate-flow" onclick="startPipelineAnimation()" style="height: 42px; border-radius: 8px; background: linear-gradient(135deg, rgba(245, 158, 11, 0.16) 0%, rgba(217, 119, 6, 0.1) 100%); border: 1px solid rgba(245, 158, 11, 0.45); color: #fbbf24; transition: all 0.2s ease; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);">
+          <i class="fas fa-bolt text-warning"></i> Animate Pipeline Flow
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Supply Chain Pipeline Stages Indicator with Live Count Badges -->
+<div class="provenance-pipeline-wrapper mb-4">
+  <div class="pipeline-track-row">
+    <!-- Stage 1 -->
+    <div class="pipeline-stage-col">
+      <div class="stage-pipeline-card" id="stage-card-1" onclick="focusStageOnCanvas(1)" title="Click to inspect Stage 1: Production Facilities">
+        <div class="stage-card-header-row">
+          <span class="stage-number-pill" style="background: rgba(99, 102, 241, 0.18); border: 1px solid rgba(99, 102, 241, 0.35); color: #c7d2fe;">
+            Stage 1
+          </span>
+          <span class="badge border border-secondary text-light px-2 stage-count-badge" id="count-stage-1">0</span>
+        </div>
+        <div class="stage-card-body-row">
+          <div class="stage-icon-circle" style="background: rgba(99, 102, 241, 0.15); color: #818cf8; border: 1px solid rgba(99, 102, 241, 0.25);">
+            <i class="fas fa-industry"></i>
+          </div>
+          <div class="stage-text-block">
+            <div class="stage-name-text">Manufacturer</div>
+            <div class="stage-sub-text">Production Plant</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Arrow 1 -> 2 -->
+    <div class="pipeline-arrow-col">
+      <i class="fas fa-chevron-right"></i>
+    </div>
+
+    <!-- Stage 2 -->
+    <div class="pipeline-stage-col">
+      <div class="stage-pipeline-card" id="stage-card-2" onclick="focusStageOnCanvas(2)" title="Click to inspect Stage 2: Regional Suppliers & Logistics">
+        <div class="stage-card-header-row">
+          <span class="stage-number-pill" style="background: rgba(239, 68, 68, 0.18); border: 1px solid rgba(239, 68, 68, 0.35); color: #fca5a5;">
+            Stage 2
+          </span>
+          <span class="badge border border-secondary text-light px-2 stage-count-badge" id="count-stage-2">0</span>
+        </div>
+        <div class="stage-card-body-row">
+          <div class="stage-icon-circle" style="background: rgba(239, 68, 68, 0.15); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.25);">
+            <i class="fas fa-truck-fast"></i>
+          </div>
+          <div class="stage-text-block">
+            <div class="stage-name-text">Supplier</div>
+            <div class="stage-sub-text">Regional Logistics</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Arrow 2 -> 3 -->
+    <div class="pipeline-arrow-col">
+      <i class="fas fa-chevron-right"></i>
+    </div>
+
+    <!-- Stage 3 (Focal) -->
+    <div class="pipeline-stage-col">
+      <div class="stage-pipeline-card focal-stage" id="stage-card-3" onclick="focusStageOnCanvas(3)" title="Click to center Focal Medicine">
+        <div class="stage-card-header-row">
+          <span class="stage-number-pill" style="background: rgba(16, 185, 129, 0.25); border: 1px solid #10b981; color: #6ee7b7;">
+            Stage 3 &bull; Focal
+          </span>
+          <span class="badge border border-success text-light px-2 stage-count-badge" style="background: rgba(16, 185, 129, 0.25);" id="count-stage-3">1</span>
+        </div>
+        <div class="stage-card-body-row">
+          <div class="stage-icon-circle" style="background: rgba(16, 185, 129, 0.22); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.4);">
+            <i class="fas fa-capsules"></i>
+          </div>
+          <div class="stage-text-block">
+            <div class="stage-name-text text-success">Medicine</div>
+            <div class="stage-sub-text" style="color: #a7f3d0;">Formulary Drug</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Arrow 3 -> 4 -->
+    <div class="pipeline-arrow-col">
+      <i class="fas fa-chevron-right"></i>
+    </div>
+
+    <!-- Stage 4 -->
+    <div class="pipeline-stage-col">
+      <div class="stage-pipeline-card" id="stage-card-4" onclick="focusStageOnCanvas(4)" title="Click to inspect Stage 4: Dispensary Pharmacies">
+        <div class="stage-card-header-row">
+          <span class="stage-number-pill" style="background: rgba(2, 132, 199, 0.18); border: 1px solid rgba(56, 189, 248, 0.35); color: #bae6fd;">
+            Stage 4
+          </span>
+          <span class="badge border border-secondary text-light px-2 stage-count-badge" id="count-stage-4">0</span>
+        </div>
+        <div class="stage-card-body-row">
+          <div class="stage-icon-circle" style="background: rgba(2, 132, 199, 0.15); color: #38bdf8; border: 1px solid rgba(2, 132, 199, 0.25);">
+            <i class="fas fa-store-alt"></i>
+          </div>
+          <div class="stage-text-block">
+            <div class="stage-name-text">Pharmacy</div>
+            <div class="stage-sub-text">Dispensary Stock</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Arrow 4 -> 5 -->
+    <div class="pipeline-arrow-col">
+      <i class="fas fa-chevron-right"></i>
+    </div>
+
+    <!-- Stage 5 -->
+    <div class="pipeline-stage-col">
+      <div class="stage-pipeline-card" id="stage-card-5" onclick="focusStageOnCanvas(5)" title="Click to inspect Stage 5: Clinical Patient Delivery">
+        <div class="stage-card-header-row">
+          <span class="stage-number-pill" style="background: rgba(20, 184, 166, 0.18); border: 1px solid rgba(20, 184, 166, 0.35); color: #99f6e4;">
+            Stage 5
+          </span>
+          <span class="badge border border-secondary text-light px-2 stage-count-badge" id="count-stage-5">0</span>
+        </div>
+        <div class="stage-card-body-row">
+          <div class="stage-icon-circle" style="background: rgba(20, 184, 166, 0.15); color: #2dd4bf; border: 1px solid rgba(20, 184, 166, 0.25);">
+            <i class="fas fa-user-injured"></i>
+          </div>
+          <div class="stage-text-block">
+            <div class="stage-name-text">Patient</div>
+            <div class="stage-sub-text">Clinical Delivery</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Main Canvas & Inspector Row -->
+<div class="graph-card shadow-lg" id="supply-chain-canvas-card">
+  <div class="graph-card-header flex-wrap gap-2 py-2.5 px-3">
+    <div class="d-flex align-items-center gap-2">
+      <div class="graph-card-title mb-0 fs-6">
+        <i class="fas fa-network-wired" style="color: #38bdf8; text-shadow: 0 0 10px rgba(56,189,248,0.5);"></i> Pipeline Graph Topology
+      </div>
+      <span class="badge shadow-sm" id="supply-chain-badge" style="background: rgba(14, 165, 233, 0.2); border: 1px solid #38bdf8; color: #7dd3fc; font-weight: 600;">
+        Loading Provenance...
+      </span>
+    </div>
+
+    <!-- Floating Canvas Controls Toolbar -->
+    <div class="d-flex align-items-center flex-wrap gap-1.5">
+      <button type="button" class="canvas-action-btn" onclick="supplyControls.reCenter()" title="Re-center camera on the central Medicine node">
+        <i class="fas fa-crosshairs text-success"></i> Center Medicine
+      </button>
+      <button type="button" class="canvas-action-btn" onclick="supplyControls.fitView()" title="Fit entire pipeline in view">
+        <i class="fas fa-expand-arrows-alt text-info"></i> Fit All
+      </button>
+      <div class="btn-group btn-group-sm" role="group">
+        <button type="button" class="canvas-action-btn" onclick="supplyControls.zoomIn()" title="Zoom In">
+          <i class="fas fa-plus"></i>
+        </button>
+        <button type="button" class="canvas-action-btn" onclick="supplyControls.zoomOut()" title="Zoom Out">
+          <i class="fas fa-minus"></i>
+        </button>
+      </div>
+      <button type="button" class="canvas-action-btn active" id="btn-toggle-labels" onclick="supplyControls.toggleLabels()" title="Toggle Relationship Edge Labels">
+        <i class="fas fa-tag text-teal"></i> Edge Labels
+      </button>
+      <button type="button" class="canvas-action-btn" id="btn-toggle-layout" onclick="supplyControls.toggleLayout()" title="Switch between Linear Pipeline and Free Dynamic Physics">
+        <i class="fas fa-arrows-split-up-and-left text-light"></i> <span id="layout-mode-label">Linear Pipeline</span>
+      </button>
+      <button type="button" class="canvas-action-btn" id="btn-maximize-canvas" onclick="toggleMaximizeSupplyChain(event)" title="Maximize view to full screen (Esc to exit)">
+        <i class="fas fa-expand text-success me-1" id="max-btn-icon"></i> <span id="max-btn-label">Maximize View</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Interactive Stage Legend Bar with Category Spotlights -->
+  <div class="px-3 py-2 border-bottom border-secondary border-opacity-25 d-flex flex-wrap gap-2 align-items-center justify-content-between" style="background: rgba(11, 17, 34, 0.95) !important;">
+    <div class="d-flex flex-wrap gap-1.5 align-items-center">
+      <span class="fw-bold text-light small me-1"><i class="fas fa-palette text-teal me-1"></i> Stage Legend:</span>
+      <button class="badge px-2.5 py-1.5 d-inline-flex align-items-center border-0" onclick="spotlightByStage(1)" style="background: rgba(99, 102, 241, 0.2); border: 1px solid #818cf8 !important; color: #c7d2fe; font-size: 11px; cursor: pointer;" title="Spotlight Stage 1: Manufacturers">
+        <span class="legend-dot me-1.5" style="background:#6366f1; border: 2px solid #fff;"></span> Stage 1: Manufacturer
+      </button>
+      <button class="badge px-2.5 py-1.5 d-inline-flex align-items-center border-0" onclick="spotlightByStage(2)" style="background: rgba(220, 38, 38, 0.2); border: 1px solid #f87171 !important; color: #fca5a5; font-size: 11px; cursor: pointer;" title="Spotlight Stage 2: Suppliers">
+        <span class="legend-dot me-1.5" style="background:#dc2626; border: 2px solid #fff;"></span> Stage 2: Supplier
+      </button>
+      <button class="badge px-2.5 py-1.5 d-inline-flex align-items-center border-0" onclick="spotlightByStage(3)" style="background: rgba(5, 150, 105, 0.2); border: 1px solid #34d399 !important; color: #a7f3d0; font-size: 11px; cursor: pointer;" title="Spotlight Stage 3: Formulary Medicine">
+        <span class="legend-dot me-1.5" style="background:#059669; border: 2px solid #fff;"></span> Stage 3: Medicine (Focal)
+      </button>
+      <button class="badge px-2.5 py-1.5 d-inline-flex align-items-center border-0" onclick="spotlightByStage(4)" style="background: rgba(2, 132, 199, 0.2); border: 1px solid #38bdf8 !important; color: #bae6fd; font-size: 11px; cursor: pointer;" title="Spotlight Stage 4: Pharmacies">
+        <span class="legend-dot me-1.5" style="background:#0284c7; border: 1px solid #7dd3fc;"></span> Stage 4: Pharmacy
+      </button>
+      <button class="badge px-2.5 py-1.5 d-inline-flex align-items-center border-0" onclick="spotlightByStage(5)" style="background: rgba(0, 128, 128, 0.2); border: 1px solid #00d4b2 !important; color: #5eead4; font-size: 11px; cursor: pointer;" title="Spotlight Stage 5: Patients">
+        <span class="legend-dot me-1.5" style="background:#008080; border: 2px solid #2dd4bf;"></span> Stage 5: Patient
+      </button>
+    </div>
+    <div>
+      <button class="btn btn-xs py-1 px-2.5 text-muted border border-secondary border-opacity-40 rounded-pill" onclick="resetSupplySpotlight()" title="Reset spotlight highlight">
+        <i class="fas fa-undo me-1 text-teal"></i> Reset View
+      </button>
+    </div>
+  </div>
+
+  <div class="graph-card-body p-3">
+    <div class="row g-3">
+      <!-- Canvas Column -->
+      <div class="col-lg-9">
+        <div id="supply-chain-canvas" class="vis-network-canvas position-relative" style="height: 560px; border-radius: 8px;">
+          <div class="position-absolute top-50 start-50 translate-middle text-center text-muted" id="supply-chain-placeholder">
+            <div class="spinner-border text-teal mb-2"></div>
+            <div class="text-light fw-semibold">Loading Provenance Graph...</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Interactive Entity Dossier Inspector Sidebar -->
+      <div class="col-lg-3">
+        <div class="p-3 bg-dark bg-opacity-75 rounded-3 border border-secondary border-opacity-25 h-100 d-flex flex-column shadow-sm" id="entity-dossier-panel">
+          <div class="d-flex justify-content-between align-items-center mb-2 pb-2 border-bottom border-secondary border-opacity-25">
+            <div class="small fw-bold text-info text-uppercase" style="letter-spacing: 0.5px;">
+              <i class="fas fa-id-card-clip me-1"></i> Entity Inspector
+            </div>
+            <span class="badge border border-info border-opacity-50 text-info px-2 py-1" style="background: rgba(14, 165, 233, 0.15);" id="dossier-stage-tag">Click Any Node</span>
+          </div>
+
+          <div id="dossier-content" class="flex-grow-1 overflow-auto">
+            <div class="text-center py-5" style="color: #94a3b8;">
+              <i class="fas fa-fingerprint fa-2x mb-2 text-info opacity-75"></i>
+              <div class="small" style="color: #cbd5e1;">Click any node on the canvas to inspect its stage role, batch provenance, and operational metadata.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/supply_chain.js') }}?v=3.2"></script>
+{% endblock %}
+

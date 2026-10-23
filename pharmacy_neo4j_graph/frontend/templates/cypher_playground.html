@@ -1,0 +1,283 @@
+{% extends "base.html" %}
+
+{% block title %}Cypher Query Terminal{% endblock %}
+{% block breadcrumb %}Cypher Query Terminal (Neo4j Console){% endblock %}
+
+{% block content %}
+<style>
+  .cypher-preset-btn {
+    background: #1e293b !important;
+    border: 1px solid #334155 !important;
+    border-left: 1px solid #334155 !important;
+    color: #e2e8f0 !important;
+    font-size: 12px !important;
+    font-weight: 500 !important;
+    border-radius: 7px !important;
+    padding: 5px 12px !important;
+    margin: 0 !important;
+    transform: none !important;
+    transition: all 0.15s ease !important;
+    cursor: pointer !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 6px !important;
+    box-shadow: none !important;
+  }
+  .cypher-preset-btn:hover {
+    background: #334155 !important;
+    border-color: #475569 !important;
+    color: #ffffff !important;
+    transform: translateY(-1px) !important;
+  }
+  .cypher-preset-btn.active {
+    background: #0d9488 !important;
+    border-color: #2dd4bf !important;
+    border-left: 1px solid #2dd4bf !important;
+    color: #ffffff !important;
+    box-shadow: 0 0 12px rgba(13, 148, 136, 0.5) !important;
+  }
+  .cypher-preset-btn .cypher-preset-item-title {
+    font-size: 12px !important;
+    font-weight: 500 !important;
+    color: inherit !important;
+  }
+  .cypher-preset-btn.active .cypher-preset-item-title {
+    color: #ffffff !important;
+    font-weight: 600 !important;
+  }
+</style>
+
+<!-- Page Header -->
+<div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
+  <div>
+    <div class="d-flex align-items-center gap-2 mb-1">
+      <h1 class="fw-bold mb-0" style="font-size: 24px; color: #0f172a; letter-spacing: -0.3px;">
+        Cypher Query Terminal
+      </h1>
+      <span class="badge" style="background: rgba(13, 148, 136, 0.12); color: #0d9488; font-weight: 600; font-size: 12px; border: 1px solid rgba(13, 148, 136, 0.25); padding: 4px 10px; border-radius: 20px;">
+        <i class="fas fa-terminal me-1"></i> Neo4j 5.x Engine
+      </span>
+    </div>
+    <p class="mb-0" style="color: #64748b; font-size: 14px;">
+      Interactive operational console for declarative Cypher graph queries, node-relationship pattern matching, and graph traversals.
+    </p>
+  </div>
+  <div class="d-inline-flex align-items-center gap-2 px-3 py-1.5" style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 8px; font-size: 13px; font-weight: 500; color: #334155; box-shadow: 0 1px 2px rgba(0,0,0,0.03);">
+    <span style="width: 7px; height: 7px; border-radius: 50%; background: #22c55e;"></span>
+    <span>Connected &middot; <code style="color: #0f172a; font-size: 12px;">neo4j_graph (bolt://7687)</code></span>
+  </div>
+</div>
+
+<!-- Section: Modern Interactive Cypher Query Console (Dark Studio Theme - Identical to SQL Console) -->
+<div class="db-studio-card mb-5" id="cypherConsoleSection">
+  <!-- Card Header -->
+  <div class="db-studio-card-header d-flex justify-content-between align-items-center flex-wrap gap-3">
+    <div class="d-flex align-items-center gap-2.5">
+      <div class="d-flex align-items-center justify-content-center" style="width: 32px; height: 32px; border-radius: 8px; background: #1e293b; border: 1px solid #334155; color: #2dd4bf;">
+        <i class="fas fa-terminal" style="font-size: 13.5px;"></i>
+      </div>
+      <div>
+        <h2 class="fw-bold mb-0" style="font-size: 15px; color: #f8fafc; letter-spacing: -0.2px;">Interactive Cypher Console</h2>
+      </div>
+    </div>
+    <div class="d-flex align-items-center gap-2">
+      <span class="d-inline-flex align-items-center gap-1.5" style="background: #052e16; color: #4ade80; border: 1px solid #15803d; font-size: 11.5px; font-weight: 500; padding: 3px 10px; border-radius: 9999px;">
+        <span style="width: 6px; height: 6px; border-radius: 50%; background: #22c55e;"></span> Live Query Engine
+      </span>
+      <span style="font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; font-size: 11.5px; color: #94a3b8; background: #1e293b; border: 1px solid #334155; padding: 3px 8px; border-radius: 6px;">
+        neo4j_graph
+      </span>
+    </div>
+  </div>
+
+  <div class="p-4">
+    <p class="small mb-3" style="color: #94a3b8; font-size: 13.5px; line-height: 1.5;">
+      Type and execute arbitrary Cypher statements directly against the active graph database with real-time performance telemetry, dynamic tabular projection, and automated safety filtering.
+    </p>
+
+    <!-- Quick Queries Toolbar -->
+    <div class="mb-3">
+      <div class="d-flex align-items-center justify-content-between mb-2 flex-wrap gap-2">
+        <span style="font-size: 11.5px; font-weight: 600; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.5px;">
+          <i class="fas fa-bolt text-warning me-1"></i> Quick Presets (Click to load):
+        </span>
+        <span style="font-size: 11.5px; color: #64748b;">
+          Press <kbd style="background: #1e293b; border: 1px solid #334155; color: #cbd5e1; font-size: 11px; padding: 2px 6px; border-radius: 4px;">Ctrl+Enter</kbd> or <kbd style="background: #1e293b; border: 1px solid #334155; color: #cbd5e1; font-size: 11px; padding: 2px 6px; border-radius: 4px;">Cmd+Enter</kbd> to run
+        </span>
+      </div>
+
+      <!-- Presets Horizontal Toolbar -->
+      <div class="d-flex flex-wrap gap-2" id="preset-library-list">
+        {% for q in predefined %}
+        <button type="button" 
+                class="btn btn-sm cypher-preset-btn cypher-preset-item {% if loop.first %}active{% endif %}" 
+                id="preset-item-{{ q.id }}"
+                data-id="{{ q.id }}"
+                data-name="{{ q.name | lower }}"
+                data-category="{{ q.category | lower }}"
+                onclick="selectPreset('{{ q.id }}')">
+          {% if 'Update' in q.name or 'Mutation' in q.category %}
+            <i class="fas fa-pen-to-square" style="color: #f59e0b; font-size: 11px;"></i>
+          {% elif 'Degree' in q.category %}
+            <i class="fas fa-pills" style="color: #38bdf8; font-size: 11px;"></i>
+          {% elif '2-Hop' in q.name or 'Traversal' in q.category %}
+            <i class="fas fa-arrows-split-up-and-left" style="color: #2dd4bf; font-size: 11px;"></i>
+          {% elif '4-Hop' in q.name %}
+            <i class="fas fa-truck-loading" style="color: #f59e0b; font-size: 11px;"></i>
+          {% elif 'Shortest Path' in q.name %}
+            <i class="fas fa-route" style="color: #c084fc; font-size: 11px;"></i>
+          {% elif 'Diamond' in q.category %}
+            <i class="fas fa-gem" style="color: #f43f5e; font-size: 11px;"></i>
+          {% elif 'Deficit' in q.name %}
+            <i class="fas fa-exclamation-triangle" style="color: #f59e0b; font-size: 11px;"></i>
+          {% elif 'Multi-Sourced' in q.name or 'Redundancy' in q.name %}
+            <i class="fas fa-boxes-stacked" style="color: #4ade80; font-size: 11px;"></i>
+          {% elif 'Hospital' in q.name %}
+            <i class="fas fa-hospital-user" style="color: #60a5fa; font-size: 11px;"></i>
+          {% else %}
+            <i class="fas fa-circle-nodes" style="color: #94a3b8; font-size: 11px;"></i>
+          {% endif %}
+          <span class="cypher-preset-item-title">
+            {% if 'Update' in q.name %}
+              <span style="color: #f59e0b; font-weight: 600;">Update:</span> {{ q.name.split(':')[1].strip() if ':' in q.name else q.name }}
+            {% elif ':' in q.name %}
+              {{ q.name.split(':')[1].strip() }}
+            {% else %}
+              {{ q.name }}
+            {% endif %}
+          </span>
+        </button>
+        <!-- Hidden Raw Cypher Storage -->
+        <script type="application/json" id="raw-cypher-{{ q.id }}">{{ q.cypher | tojson }}</script>
+        {% endfor %}
+      </div>
+    </div>
+
+    <!-- Compatibility Anchors for cypher_playground.js -->
+    <input type="hidden" id="preset-search-input" value="">
+    <span id="active-preset-title-text" style="display:none;">{{ predefined[0].name }}</span>
+
+    <!-- Modern Code Editor Frame (Dark Theme - Same as query.sql) -->
+    <div class="mb-3 sql-dark-editor-wrapper">
+      <!-- Editor Header Bar -->
+      <div class="d-flex justify-content-between align-items-center sql-dark-editor-header">
+        <div class="d-flex align-items-center gap-2">
+          <div class="d-flex gap-1.5">
+            <span style="width: 10px; height: 10px; border-radius: 50%; background: #ef4444; opacity: 0.85;"></span>
+            <span style="width: 10px; height: 10px; border-radius: 50%; background: #f59e0b; opacity: 0.85;"></span>
+            <span style="width: 10px; height: 10px; border-radius: 50%; background: #22c55e; opacity: 0.85;"></span>
+          </div>
+          <span style="font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; font-size: 11.5px; color: #94a3b8; margin-left: 6px;">
+            query.cypher
+          </span>
+        </div>
+        <div class="d-flex align-items-center gap-2">
+          <span id="cypher-char-counter" style="font-size: 11px; color: #64748b; font-family: monospace;">0 characters</span>
+          <span style="font-size: 11px; color: #2dd4bf; font-family: monospace; border-left: 1px solid #334155; padding-left: 8px;">OpenCypher / Neo4j 5.x Dialect</span>
+        </div>
+      </div>
+
+      <!-- Textarea Input Area -->
+      <textarea id="cypher-editor" class="sql-dark-editor" rows="6" placeholder="// Type your Cypher statement here (e.g. MATCH (p:Patient)-[:HAS_PRESCRIPTION]->(m:Medicine) RETURN p.name, m.name LIMIT 10;)" style="background-color: #090d16 !important; color: #2dd4bf !important; caret-color: #2dd4bf !important; border: none !important; border-radius: 0 0 10px 10px !important; outline: none !important; box-shadow: none !important; width: 100%; padding: 16px 18px; line-height: 1.6; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace !important; font-size: 13.5px; resize: vertical; display: block;" spellcheck="false">{{ predefined[0].cypher }}</textarea>
+    </div>
+
+    <!-- Action Buttons & Safety Notice -->
+    <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+      <div class="d-flex align-items-center gap-2">
+        <button type="button" id="btnExecuteCypher" class="btn btn-primary d-inline-flex align-items-center gap-2" onclick="runCypherQuery()" style="background: linear-gradient(135deg, #0d9488 0%, #06b6d4 100%); border-color: #14b8a6; border-radius: 8px; font-weight: 500; font-size: 13px; padding: 8px 18px;">
+          <i class="fas fa-play"></i> Execute Cypher
+        </button>
+        <button type="button" class="btn btn-outline-secondary d-inline-flex align-items-center gap-1.5" onclick="clearCypherEditor()" style="border-radius: 8px; font-size: 13px; padding: 8px 16px; border-color: #334155; color: #cbd5e1;">
+          <i class="fas fa-eraser text-muted"></i> Clear Editor
+        </button>
+        <button type="button" class="btn btn-outline-secondary d-inline-flex align-items-center gap-1.5" id="btn-copy-query" onclick="copyCypherQuery()" style="border-radius: 8px; font-size: 13px; padding: 8px 16px; border-color: #334155; color: #cbd5e1;">
+          <i class="fas fa-copy text-muted"></i> Copy Query
+        </button>
+      </div>
+      <div class="d-inline-flex align-items-center gap-1.5 small" style="font-size: 12px; color: #94a3b8;">
+        <i class="fas fa-shield-halved text-success"></i> Supported Dialect: <code>MATCH</code>, <code>RETURN</code>, <code>WHERE</code>, <code class="text-warning">SET (Updates)</code>, <code>ORDER BY</code>, <code>LIMIT</code>.
+      </div>
+    </div>
+
+    <!-- Execution Results Container -->
+    <div id="cypher-result-card" class="mt-4 pt-3 border-top" style="border-color: #1e293b !important;">
+      <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+        <div class="d-flex align-items-center gap-2">
+          <span style="font-size: 11.5px; font-weight: 600; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.5px;">
+            <i class="fas fa-table me-1 text-teal"></i> Query Execution Results
+          </span>
+          <span class="badge" id="result-status-badge" style="background: #052e16; color: #4ade80; border: 1px solid #15803d; font-size: 11px;">Ready</span>
+          <span class="badge font-monospace" id="result-timing-badge" style="background: #1e293b; color: #7dd3fc; border: 1px solid #334155; font-size: 11px;">0.00 ms</span>
+        </div>
+        <div class="d-flex align-items-center gap-2">
+          <div class="btn-group btn-group-sm" role="group">
+            <button class="btn btn-outline-secondary active fw-semibold" id="btn-view-table" onclick="toggleResultView('table')" style="border-color: #334155; color: #e2e8f0; font-size: 11.5px;">
+              <i class="fas fa-table me-1 text-teal"></i> Table
+            </button>
+            <button class="btn btn-outline-secondary fw-semibold" id="btn-view-json" onclick="toggleResultView('json')" style="border-color: #334155; color: #e2e8f0; font-size: 11.5px;">
+              <i class="fas fa-code me-1 text-info"></i> JSON
+            </button>
+          </div>
+          <button class="btn btn-sm btn-outline-success fw-semibold" onclick="exportResultsCSV()" id="btn-export-csv" style="border-radius: 6px; font-size: 11.5px; border-color: #166534; color: #4ade80;">
+            <i class="fas fa-download me-1"></i> CSV
+          </button>
+        </div>
+      </div>
+
+      <div id="result-note-banner" class="alert py-2.5 px-3 small mb-3" style="display:none; background: #0c4a6e; border: 1px solid #0284c7; color: #bae6fd; border-radius: 8px;"></div>
+
+      <!-- Table View -->
+      <div id="result-table-container" class="table-responsive" style="max-height: 440px; overflow-y: auto;">
+        <table class="saas-table w-100" id="cypher-result-table">
+          <thead id="cypher-result-thead"></thead>
+          <tbody id="cypher-result-tbody"></tbody>
+        </table>
+      </div>
+
+      <!-- JSON View -->
+      <div id="result-json-container" style="display:none;">
+        <pre class="code-box" id="cypher-result-json" style="max-height: 440px; background: #090d16; color: #38bdf8; border: 1px solid #1e293b; border-radius: 8px; padding: 14px; font-size: 12.5px;"></pre>
+      </div>
+    </div>
+
+    <!-- Graph Schema Quick Reference at Bottom -->
+    <div class="mt-4 pt-3 border-top" style="border-color: #1e293b !important;">
+      <div class="d-flex align-items-center justify-content-between mb-2">
+        <span style="font-size: 11.5px; font-weight: 600; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.5px;">
+          <i class="fas fa-sitemap me-1 text-purple"></i> Graph Schema Quick Reference:
+        </span>
+      </div>
+      <div class="d-flex flex-wrap gap-2" style="font-size: 11.5px;">
+        <span style="background: #1e293b; border: 1px solid #334155; padding: 4px 10px; border-radius: 6px; color: #cbd5e1;">
+          <span class="text-teal fw-bold">Patient</span> <span class="text-muted">-[:HAS_PRESCRIPTION]-></span> <span class="text-warning fw-bold">Prescription</span>
+        </span>
+        <span style="background: #1e293b; border: 1px solid #334155; padding: 4px 10px; border-radius: 6px; color: #cbd5e1;">
+          <span class="text-warning fw-bold">Prescription</span> <span class="text-muted">-[:CONTAINS_MEDICINE]-></span> <span class="text-success fw-bold">Medicine</span>
+        </span>
+        <span style="background: #1e293b; border: 1px solid #334155; padding: 4px 10px; border-radius: 6px; color: #cbd5e1;">
+          <span class="text-sky fw-bold">Pharmacy</span> <span class="text-muted">-[:STOCKS]-></span> <span class="text-success fw-bold">Medicine</span>
+        </span>
+        <span style="background: #1e293b; border: 1px solid #334155; padding: 4px 10px; border-radius: 6px; color: #cbd5e1;">
+          <span class="text-info fw-bold">Supplier</span> <span class="text-muted">-[:SUPPLIES_TO]-></span> <span class="text-sky fw-bold">Pharmacy</span>
+        </span>
+        <span style="background: #1e293b; border: 1px solid #334155; padding: 4px 10px; border-radius: 6px; color: #cbd5e1;">
+          <span class="text-info fw-bold">Supplier</span> <span class="text-muted">-[:PROCURES_FROM]-></span> <span class="text-warning fw-bold">Manufacturer</span>
+        </span>
+        <span style="background: #1e293b; border: 1px solid #334155; padding: 4px 10px; border-radius: 6px; color: #cbd5e1;">
+          <span class="text-primary fw-bold">Doctor</span> <span class="text-muted">-[:WRITES]-></span> <span class="text-warning fw-bold">Prescription</span>
+        </span>
+        <span style="background: #1e293b; border: 1px solid #334155; padding: 4px 10px; border-radius: 6px; color: #cbd5e1;">
+          <span class="text-primary fw-bold">Doctor</span> <span class="text-muted">-[:WORKS_AT]-></span> <span class="text-indigo fw-bold">Hospital</span>
+        </span>
+        <span style="background: #1e293b; border: 1px solid #334155; padding: 4px 10px; border-radius: 6px; color: #cbd5e1;">
+          <span class="text-indigo fw-bold">Hospital</span> <span class="text-muted">-[:AFFILIATED_WITH]-></span> <span class="text-sky fw-bold">Pharmacy</span>
+        </span>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/cypher_playground.js') }}"></script>
+{% endblock %}

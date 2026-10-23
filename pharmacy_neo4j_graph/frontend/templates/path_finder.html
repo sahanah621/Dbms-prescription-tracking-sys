@@ -1,0 +1,373 @@
+{% extends "base.html" %}
+
+{% block title %}Relationship Path Finder{% endblock %}
+{% block breadcrumb %}Relationship Path Finder (Shortest Path){% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
+  <div>
+    <div class="d-flex align-items-center gap-2 mb-1">
+      <h3 class="fw-bold text-dark mb-0 d-flex align-items-center gap-2" style="letter-spacing: -0.5px;">
+        <span class="d-inline-flex align-items-center justify-content-center rounded-circle" style="width: 38px; height: 38px; background: rgba(14, 165, 233, 0.12); color: #0284c7; box-shadow: 0 2px 8px rgba(14, 165, 233, 0.2);">
+          <i class="fas fa-route"></i>
+        </span>
+        Relationship Path Finder
+      </h3>
+      <span class="badge border border-info border-opacity-40 text-info px-2.5 py-1" style="background: rgba(14, 165, 233, 0.1); font-size: 11px; font-weight: 700;">
+        <i class="fas fa-sitemap me-1"></i> Multi-Hop Shortest Path
+      </span>
+    </div>
+    <p class="text-secondary small mb-0">
+      Compute, trace, and inspect the shortest graph traversal pathway between any two clinical or supply chain entities using Neo4j's <code>shortestPath()</code> algorithm.
+    </p>
+  </div>
+</div>
+
+<!-- Path Configuration Card -->
+<div class="graph-card mb-4 shadow-lg">
+  <div class="graph-card-header flex-wrap gap-2 py-3 px-3">
+    <div class="d-flex align-items-center gap-2">
+      <div class="graph-card-title mb-0 fs-6">
+        <i class="fas fa-sliders-h text-info me-1.5"></i> Select Origin &amp; Destination Endpoints
+      </div>
+      <span class="badge" style="background: rgba(2, 132, 199, 0.15); border: 1px solid rgba(2, 132, 199, 0.35); color: #7dd3fc; font-weight: 600; font-size: 11px; padding: 4px 8px; border-radius: 6px;">
+        Curated Clinical &amp; Supply Pathways
+      </span>
+    </div>
+  </div>
+
+  <div class="graph-card-body p-3">
+    <!-- Curated Multi-Hop Traversal Presets 4-Card Deck -->
+    <div class="mb-3.5">
+      <div class="d-flex justify-content-between align-items-center mb-2.5 flex-wrap gap-2">
+        <div class="d-flex align-items-center gap-2">
+          <span class="badge" style="background: rgba(255, 255, 255, 0.07); border: 1px solid rgba(255, 255, 255, 0.12); color: #cbd5e1; font-size: 11px; font-weight: 600; padding: 4px 8px; border-radius: 6px;">
+            <i class="fas fa-bolt text-warning me-1"></i> Quick Presets
+          </span>
+          <span class="text-light fw-bold small" style="letter-spacing: -0.2px;">Curated Multi-Hop Traversal Pathways</span>
+        </div>
+        <span class="small text-secondary" style="font-size: 11.5px;">
+          <i class="fas fa-hand-pointer text-teal me-1"></i> Click preset to auto-trace path
+        </span>
+      </div>
+
+      <div class="row g-2.5">
+        <!-- Preset 1: Patient -> Manufacturer -->
+        <div class="col-12 col-md-6 col-lg-3">
+          <div class="path-preset-card preset-path-1 active" 
+               id="preset-path-1"
+               onclick="setPathPreset('Patient', '401', 'Manufacturer', '701', 'preset-path-1')"
+               role="button" tabindex="0">
+            <div class="preset-icon-box" style="background: rgba(2, 132, 199, 0.12); border: 1px solid rgba(2, 132, 199, 0.28); color: #38bdf8;">
+              <i class="fas fa-industry"></i>
+            </div>
+            <div class="preset-info-box">
+              <div class="preset-title">Rahul ➔ Sun Pharma</div>
+              <div class="preset-meta">
+                <span class="preset-type-pill" style="background: rgba(2, 132, 199, 0.15); color: #7dd3fc; border: 1px solid rgba(2, 132, 199, 0.35);">5 Hops</span>
+                <span class="preset-id-text">Patient to Mfg</span>
+              </div>
+            </div>
+            <div class="preset-action-arrow">
+              <i class="fas fa-arrow-right"></i>
+            </div>
+          </div>
+        </div>
+
+        <!-- Preset 2: Patient -> Pharmacy -->
+        <div class="col-12 col-md-6 col-lg-3">
+          <div class="path-preset-card preset-path-2" 
+               id="preset-path-2"
+               onclick="setPathPreset('Patient', '403', 'Pharmacy', '101', 'preset-path-2')"
+               role="button" tabindex="0">
+            <div class="preset-icon-box" style="background: rgba(13, 148, 136, 0.12); border: 1px solid rgba(13, 148, 136, 0.28); color: #2dd4bf;">
+              <i class="fas fa-clinic-medical"></i>
+            </div>
+            <div class="preset-info-box">
+              <div class="preset-title">Suresh ➔ Apollo Care</div>
+              <div class="preset-meta">
+                <span class="preset-type-pill" style="background: rgba(13, 148, 136, 0.15); color: #5eead4; border: 1px solid rgba(13, 148, 136, 0.35);">3 Hops</span>
+                <span class="preset-id-text">Patient to Rx Hub</span>
+              </div>
+            </div>
+            <div class="preset-action-arrow">
+              <i class="fas fa-arrow-right"></i>
+            </div>
+          </div>
+        </div>
+
+        <!-- Preset 3: Doctor -> Medicine -->
+        <div class="col-12 col-md-6 col-lg-3">
+          <div class="path-preset-card preset-path-3" 
+               id="preset-path-3"
+               onclick="setPathPreset('Doctor', '301', 'Medicine', '501', 'preset-path-3')"
+               role="button" tabindex="0">
+            <div class="preset-icon-box" style="background: rgba(245, 158, 11, 0.12); border: 1px solid rgba(245, 158, 11, 0.28); color: #fbbf24;">
+              <i class="fas fa-user-md"></i>
+            </div>
+            <div class="preset-info-box">
+              <div class="preset-title">Dr. Rajesh ➔ Dolo 650</div>
+              <div class="preset-meta">
+                <span class="preset-type-pill" style="background: rgba(245, 158, 11, 0.15); color: #fde68a; border: 1px solid rgba(245, 158, 11, 0.35);">2 Hops</span>
+                <span class="preset-id-text">Physician to Drug</span>
+              </div>
+            </div>
+            <div class="preset-action-arrow">
+              <i class="fas fa-arrow-right"></i>
+            </div>
+          </div>
+        </div>
+
+        <!-- Preset 4: Hospital -> Pharmacy -->
+        <div class="col-12 col-md-6 col-lg-3">
+          <div class="path-preset-card preset-path-4" 
+               id="preset-path-4"
+               onclick="setPathPreset('Hospital', '201', 'Pharmacy', '101', 'preset-path-4')"
+               role="button" tabindex="0">
+            <div class="preset-icon-box" style="background: rgba(139, 92, 246, 0.12); border: 1px solid rgba(139, 92, 246, 0.28); color: #a78bfa;">
+              <i class="fas fa-hospital"></i>
+            </div>
+            <div class="preset-info-box">
+              <div class="preset-title">Lilavati ➔ Apollo Care</div>
+              <div class="preset-meta">
+                <span class="preset-type-pill" style="background: rgba(139, 92, 246, 0.15); color: #c4b5fd; border: 1px solid rgba(139, 92, 246, 0.35);">1 Hop</span>
+                <span class="preset-id-text">Hospital Network</span>
+              </div>
+            </div>
+            <div class="preset-action-arrow">
+              <i class="fas fa-arrow-right"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Manual Origin & Destination Selector Form -->
+    <form id="path-finder-form" onsubmit="submitPathSearch(event)" class="pt-3 border-top" style="border-color: rgba(255, 255, 255, 0.08) !important;">
+      <div class="row g-3 align-items-center">
+        <!-- ORIGIN (Start Entity) Card -->
+        <div class="col-12 col-lg-5">
+          <div class="path-endpoint-card origin-panel">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+              <span class="badge" style="background: rgba(13, 148, 136, 0.15); border: 1px solid rgba(13, 148, 136, 0.35); color: #5eead4; font-weight: 700; font-size: 11px;">
+                <i class="fas fa-play-circle me-1"></i> ORIGIN (START ENTITY)
+              </span>
+              <span class="text-secondary small fw-semibold" id="origin-type-badge">Patient</span>
+            </div>
+            <div class="row g-2">
+              <div class="col-12 col-sm-4">
+                <label class="form-label small text-light fw-semibold mb-1">Entity Category</label>
+                <select id="from-type-select" class="form-select explorer-select" onchange="onFromTypeChange()">
+                  <option value="Patient" selected>Patient</option>
+                  <option value="Doctor">Doctor</option>
+                  <option value="Hospital">Hospital</option>
+                  <option value="Medicine">Medicine</option>
+                  <option value="Pharmacy">Pharmacy</option>
+                  <option value="Supplier">Supplier</option>
+                  <option value="Manufacturer">Manufacturer</option>
+                </select>
+              </div>
+              <div class="col-12 col-sm-8">
+                <label class="form-label small text-light fw-semibold mb-1">Select Specific Entity</label>
+                <select id="from-id-select" class="form-select explorer-select">
+                  <!-- Populated by JS -->
+                </select>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Center Swap & Find CTA -->
+        <div class="col-12 col-lg-2 text-center">
+          <div class="d-flex flex-row flex-lg-column align-items-center justify-content-center gap-2 my-1">
+            <button type="button" class="path-swap-btn" onclick="swapPathEndpoints()" title="Swap Origin and Destination Endpoints">
+              <i class="fas fa-exchange-alt"></i>
+            </button>
+            <button type="submit" id="btn-find-path" class="btn text-white fw-bold d-flex align-items-center justify-content-center gap-2 explorer-cta-btn w-100" style="height: 42px;">
+              <i class="fas fa-route"></i> Find Path
+            </button>
+          </div>
+        </div>
+
+        <!-- DESTINATION (Target Entity) Card -->
+        <div class="col-12 col-lg-5">
+          <div class="path-endpoint-card dest-panel">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+              <span class="badge" style="background: rgba(245, 158, 11, 0.15); border: 1px solid rgba(245, 158, 11, 0.35); color: #fde68a; font-weight: 700; font-size: 11px;">
+                <i class="fas fa-bullseye me-1"></i> DESTINATION (TARGET ENTITY)
+              </span>
+              <span class="text-secondary small fw-semibold" id="dest-type-badge">Manufacturer</span>
+            </div>
+            <div class="row g-2">
+              <div class="col-12 col-sm-4">
+                <label class="form-label small text-light fw-semibold mb-1">Entity Category</label>
+                <select id="to-type-select" class="form-select explorer-select" onchange="onToTypeChange()">
+                  <option value="Manufacturer" selected>Manufacturer</option>
+                  <option value="Pharmacy">Pharmacy</option>
+                  <option value="Supplier">Supplier</option>
+                  <option value="Hospital">Hospital</option>
+                  <option value="Medicine">Medicine</option>
+                  <option value="Doctor">Doctor</option>
+                  <option value="Patient">Patient</option>
+                </select>
+              </div>
+              <div class="col-12 col-sm-8">
+                <label class="form-label small text-light fw-semibold mb-1">Select Specific Entity</label>
+                <select id="to-id-select" class="form-select explorer-select">
+                  <!-- Populated by JS -->
+                </select>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Path Visualization Canvas & Breadcrumb Card -->
+<div class="graph-card shadow-lg">
+  <div class="graph-card-header flex-wrap gap-2 py-2.5 px-3">
+    <div class="d-flex align-items-center gap-2">
+      <div class="graph-card-title mb-0 fs-6">
+        <i class="fas fa-bezier-curve" style="color: #38bdf8; text-shadow: 0 0 10px rgba(56,189,248,0.5);"></i> Discovered Shortest Traversal Path
+      </div>
+      <span class="badge shadow-sm" id="path-metrics-badge" style="background: rgba(14, 165, 233, 0.2); border: 1px solid #38bdf8; color: #7dd3fc; font-weight: 600;">
+        Awaiting Execution
+      </span>
+    </div>
+
+    <!-- Floating Canvas Controls Toolbar -->
+    <div class="d-flex align-items-center flex-wrap gap-1.5">
+      <button type="button" class="canvas-action-btn" onclick="pathControls.reCenter()" title="Re-center canvas on the traversal path">
+        <i class="fas fa-crosshairs text-warning"></i> Center
+      </button>
+      <button type="button" class="canvas-action-btn" onclick="pathControls.fitView()" title="Fit entire path in view">
+        <i class="fas fa-expand-arrows-alt text-info"></i> Fit All
+      </button>
+      <div class="btn-group btn-group-sm" role="group">
+        <button type="button" class="canvas-action-btn" onclick="pathControls.zoomIn()" title="Zoom In">
+          <i class="fas fa-plus"></i>
+        </button>
+        <button type="button" class="canvas-action-btn" onclick="pathControls.zoomOut()" title="Zoom Out">
+          <i class="fas fa-minus"></i>
+        </button>
+      </div>
+      <button type="button" class="canvas-action-btn active" id="btn-toggle-labels" onclick="pathControls.toggleLabels()" title="Toggle Relationship Edge Labels">
+        <i class="fas fa-tag text-teal"></i> Edge Labels
+      </button>
+      <button type="button" class="canvas-action-btn" id="btn-toggle-layout" onclick="pathControls.toggleLayout()" title="Switch between Linear Pipeline and Free Physics Layout">
+        <i class="fas fa-arrows-split-up-and-left text-light"></i> <span id="layout-mode-label">Linear</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Interactive Entity Legend Bar -->
+  <div class="px-3 py-2 border-bottom border-secondary border-opacity-25 d-flex flex-wrap gap-2 align-items-center justify-content-between" style="background: rgba(11, 17, 34, 0.95) !important;">
+    <div class="d-flex flex-wrap gap-1.5 align-items-center">
+      <span class="fw-bold text-light small me-1"><i class="fas fa-palette text-teal me-1"></i> Legend:</span>
+      <button class="badge px-2.5 py-1.5 d-inline-flex align-items-center border-0" onclick="spotlightByPathGroup('Origin')" style="background: rgba(16, 185, 129, 0.2); border: 1px solid #10b981 !important; color: #6ee7b7; font-size: 11px; cursor: pointer;" title="Spotlight Origin Node">
+        <span class="legend-dot me-1.5" style="background:#10b981; border: 2px solid #fff;"></span> Origin (Start)
+      </button>
+      <button class="badge px-2.5 py-1.5 d-inline-flex align-items-center border-0" onclick="spotlightByPathGroup('Target')" style="background: rgba(245, 158, 11, 0.2); border: 1px solid #f59e0b !important; color: #fbbf24; font-size: 11px; cursor: pointer;" title="Spotlight Target Node">
+        <span class="legend-dot me-1.5" style="background:#f59e0b; border: 2px solid #fff;"></span> Target (End)
+      </button>
+      <button class="badge px-2.5 py-1.5 d-inline-flex align-items-center border-0" onclick="spotlightByPathGroup('Patient')" style="background: rgba(0, 128, 128, 0.2); border: 1px solid #00d4b2 !important; color: #5eead4; font-size: 11px; cursor: pointer;" title="Spotlight Patients">
+        <span class="legend-dot me-1.5" style="background:#008080; border: 1px solid #2dd4bf;"></span> Patient
+      </button>
+      <button class="badge px-2.5 py-1.5 d-inline-flex align-items-center border-0" onclick="spotlightByPathGroup('Doctor')" style="background: rgba(79, 70, 229, 0.2); border: 1px solid #818cf8 !important; color: #c7d2fe; font-size: 11px; cursor: pointer;" title="Spotlight Doctors">
+        <span class="legend-dot me-1.5" style="background:#4f46e5; border: 1px solid #a5b4fc;"></span> Doctor
+      </button>
+      <button class="badge px-2.5 py-1.5 d-inline-flex align-items-center border-0" onclick="spotlightByPathGroup('Hospital')" style="background: rgba(124, 58, 237, 0.2); border: 1px solid #a78bfa !important; color: #ddd6fe; font-size: 11px; cursor: pointer;" title="Spotlight Hospitals">
+        <span class="legend-dot me-1.5" style="background:#7c3aed; border: 1px solid #c4b5fd;"></span> Hospital
+      </button>
+      <button class="badge px-2.5 py-1.5 d-inline-flex align-items-center border-0" onclick="spotlightByPathGroup('Prescription')" style="background: rgba(217, 119, 6, 0.2); border: 1px solid #fbbf24 !important; color: #fde68a; font-size: 11px; cursor: pointer;" title="Spotlight Prescriptions">
+        <span class="legend-dot me-1.5" style="background:#d97706; border: 1px solid #fef08a;"></span> Prescription
+      </button>
+      <button class="badge px-2.5 py-1.5 d-inline-flex align-items-center border-0" onclick="spotlightByPathGroup('Medicine')" style="background: rgba(5, 150, 105, 0.2); border: 1px solid #34d399 !important; color: #a7f3d0; font-size: 11px; cursor: pointer;" title="Spotlight Medicines">
+        <span class="legend-dot me-1.5" style="background:#059669; border: 1px solid #6ee7b7;"></span> Medicine
+      </button>
+      <button class="badge px-2.5 py-1.5 d-inline-flex align-items-center border-0" onclick="spotlightByPathGroup('Pharmacy')" style="background: rgba(2, 132, 199, 0.2); border: 1px solid #38bdf8 !important; color: #bae6fd; font-size: 11px; cursor: pointer;" title="Spotlight Pharmacies">
+        <span class="legend-dot me-1.5" style="background:#0284c7; border: 1px solid #7dd3fc;"></span> Pharmacy
+      </button>
+      <button class="badge px-2.5 py-1.5 d-inline-flex align-items-center border-0" onclick="spotlightByPathGroup('Supplier')" style="background: rgba(220, 38, 38, 0.2); border: 1px solid #f87171 !important; color: #fca5a5; font-size: 11px; cursor: pointer;" title="Spotlight Suppliers">
+        <span class="legend-dot me-1.5" style="background:#dc2626; border: 1px solid #fca5a5;"></span> Supplier
+      </button>
+      <button class="badge px-2.5 py-1.5 d-inline-flex align-items-center border-0" onclick="spotlightByPathGroup('Manufacturer')" style="background: rgba(99, 102, 241, 0.2); border: 1px solid #a5b4fc !important; color: #e0e7ff; font-size: 11px; cursor: pointer;" title="Spotlight Manufacturers">
+        <span class="legend-dot me-1.5" style="background:#6366f1; border: 1px solid #c7d2fe;"></span> Manufacturer
+      </button>
+    </div>
+    <div>
+      <button class="btn btn-xs py-1 px-2.5 text-muted border border-secondary border-opacity-40 rounded-pill" onclick="resetPathSpotlight()" title="Reset spotlight highlight">
+        <i class="fas fa-undo me-1 text-teal"></i> Reset View
+      </button>
+    </div>
+  </div>
+
+  <div class="graph-card-body p-3">
+    <!-- Step-by-Step Breadcrumbs -->
+    <div id="path-breadcrumbs-container" style="display:none;" class="mb-3 p-3 bg-dark bg-opacity-75 rounded-3 border border-secondary border-opacity-25 shadow-sm">
+      <div class="d-flex justify-content-between align-items-center mb-2 flex-wrap gap-2">
+        <div class="small fw-bold text-info text-uppercase" style="letter-spacing: 0.5px;">
+          <i class="fas fa-shoe-prints me-1"></i> Sequential Traversal Pipeline:
+        </div>
+        <span class="small text-muted" id="breadcrumb-degree-label"></span>
+      </div>
+      <div class="path-hop-breadcrumb d-flex flex-wrap align-items-center gap-2" id="path-hops-list"></div>
+    </div>
+
+    <!-- Canvas Container -->
+    <div id="path-canvas" class="vis-network-canvas position-relative" style="height: 520px; border-radius: 8px;">
+      <div class="position-absolute top-50 start-50 translate-middle text-center text-muted" id="path-placeholder-text">
+        <i class="fas fa-route fa-3x mb-3 text-info opacity-75"></i>
+        <div class="fs-5 fw-semibold text-light mb-1">Traversing Shortest Relational Path...</div>
+        <div class="small text-muted max-w-md">Calculating Dijkstra / BFS shortest graph traversal hops.</div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  window.PATH_ENTITIES = {
+    Patient: [
+      {% for p in patients %}
+      { id: '{{ p.Patient_ID }}', label: '{{ p.First_Name }} {{ p.Last_Name }} (ID: {{ p.Patient_ID }}) - {{ p.City }}' },
+      {% endfor %}
+    ],
+    Doctor: [
+      {% for d in doctors %}
+      { id: '{{ d.Doctor_ID }}', label: 'Dr. {{ d.First_Name }} {{ d.Last_Name }} (ID: {{ d.Doctor_ID }}){% if d.Qualification %} - {{ d.Qualification }}{% endif %}' },
+      {% endfor %}
+    ],
+    Hospital: [
+      {% for h in hospitals %}
+      { id: '{{ h.Hospital_ID }}', label: '{{ h.Name }} (ID: {{ h.Hospital_ID }}) - {{ h.City }}' },
+      {% endfor %}
+    ],
+    Medicine: [
+      {% for m in medicines %}
+      { id: '{{ m.Medicine_ID }}', label: '{{ m.Name }} (ID: {{ m.Medicine_ID }})' },
+      {% endfor %}
+    ],
+    Pharmacy: [
+      {% for ph in pharmacies %}
+      { id: '{{ ph.Pharmacy_ID }}', label: '{{ ph.Name }} (ID: {{ ph.Pharmacy_ID }}) - {{ ph.City }}' },
+      {% endfor %}
+    ],
+    Supplier: [
+      {% for s in suppliers %}
+      { id: '{{ s.Supplier_ID }}', label: '{{ s.Name }} (ID: {{ s.Supplier_ID }})' },
+      {% endfor %}
+    ],
+    Manufacturer: [
+      {% for mfg in manufacturers %}
+      { id: '{{ mfg.Manufacturer_ID }}', label: '{{ mfg.Brand_Name }} (ID: {{ mfg.Manufacturer_ID }})' },
+      {% endfor %}
+    ]
+  };
+</script>
+<script src="{{ url_for('static', filename='js/path_finder.js') }}?v=3.2"></script>
+{% endblock %}
+

@@ -1,0 +1,19 @@
+# Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environments
+venv/
+env/
+.venv/
+
+# Environment credentials
+.env
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log

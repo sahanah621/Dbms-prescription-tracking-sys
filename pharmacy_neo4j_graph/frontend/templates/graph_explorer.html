@@ -1,0 +1,355 @@
+{% extends "base.html" %}
+
+{% block title %}Graph Explorer{% endblock %}
+{% block breadcrumb %}Graph Explorer{% endblock %}
+
+{% block content %}
+<!-- Executive Page Header -->
+<div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
+  <div>
+    <h2 class="fw-bold text-dark mb-1" style="letter-spacing: -0.3px;">
+      <i class="fas fa-search-location text-teal me-2"></i>Entity Graph Explorer
+    </h2>
+    <p class="text-secondary small mb-0">
+      Inspect the immediate relational neighborhood of any clinical entity across 1-hop and 2-hop graph traversals.
+    </p>
+  </div>
+  <div class="d-flex align-items-center gap-2 flex-wrap">
+    <div class="db-status-pill neo4j-live shadow-sm" style="background: rgba(13, 148, 136, 0.15); border: 1.5px solid #0d9488; color: #0d9488; font-weight: 700;">
+      <i class="fas fa-project-diagram text-teal"></i>
+      <span>Neighborhood Traversal</span>
+    </div>
+  </div>
+</div>
+
+<!-- Search & Presets Card -->
+<div class="graph-card mb-4">
+  <div class="graph-card-header py-3 px-3">
+    <div class="graph-card-title text-white fs-6">
+      <i class="fas fa-compass text-teal me-1.5"></i> Select or Search Focal Entity
+    </div>
+    <div class="d-flex align-items-center gap-2 flex-wrap">
+      <span class="text-secondary small fw-semibold">Traversal Radius:</span>
+      <div class="depth-switch-container">
+        <input type="radio" class="btn-check" name="depthRadio" id="depth1" value="1" autocomplete="off">
+        <label class="depth-switch-btn" id="label-depth1" for="depth1">
+          <i class="fas fa-arrows-split-up-and-left me-1 text-teal"></i> 1 Hop (Direct)
+        </label>
+        <input type="radio" class="btn-check" name="depthRadio" id="depth2" value="2" checked autocomplete="off">
+        <label class="depth-switch-btn active" id="label-depth2" for="depth2">
+          <i class="fas fa-sitemap me-1 text-teal"></i> 2 Hops (Clinical Ecosystem)
+        </label>
+      </div>
+    </div>
+  </div>
+
+  <div class="graph-card-body p-3">
+    <!-- Symmetrical 3x2 Presets Grid -->
+    <div class="mb-3.5">
+      <div class="d-flex justify-content-between align-items-center mb-2.5 flex-wrap gap-2">
+        <div class="d-flex align-items-center gap-2">
+          <span class="badge" style="background: rgba(255, 255, 255, 0.07); border: 1px solid rgba(255, 255, 255, 0.12); color: #cbd5e1; font-size: 11px; font-weight: 600; padding: 4px 8px; border-radius: 6px;">
+            <i class="fas fa-bolt text-warning me-1"></i> Quick Presets
+          </span>
+          <span class="text-light fw-bold small" style="letter-spacing: -0.2px;">Curated Clinical Focal Entities</span>
+        </div>
+        <span class="small text-secondary" style="font-size: 11.5px;">
+          <i class="fas fa-hand-pointer text-teal me-1"></i> Click card to isolate &amp; trace subgraph
+        </span>
+      </div>
+
+      <div class="row g-2.5">
+        <!-- 1. Doctor -->
+        <div class="col-12 col-md-6 col-lg-4">
+          <div class="explorer-preset-card preset-doctor active" 
+               id="preset-card-Doctor-304"
+               onclick="exploreEntityPreset('Doctor', '304', 'Dr. Pooja Rao')"
+               role="button" tabindex="0">
+            <div class="preset-icon-box">
+              <i class="fas fa-user-md"></i>
+            </div>
+            <div class="preset-info-box">
+              <div class="preset-title">Dr. Pooja Rao</div>
+              <div class="preset-meta">
+                <span class="preset-type-pill pill-doctor">Doctor</span>
+                <span class="preset-id-text">ID: 304 &bull; Pediatrics</span>
+              </div>
+            </div>
+            <div class="preset-action-arrow">
+              <i class="fas fa-arrow-right"></i>
+            </div>
+          </div>
+        </div>
+
+        <!-- 2. Patient -->
+        <div class="col-12 col-md-6 col-lg-4">
+          <div class="explorer-preset-card preset-patient" 
+               id="preset-card-Patient-401"
+               onclick="exploreEntityPreset('Patient', '401', 'Rahul Sharma')"
+               role="button" tabindex="0">
+            <div class="preset-icon-box">
+              <i class="fas fa-user-injured"></i>
+            </div>
+            <div class="preset-info-box">
+              <div class="preset-title">Rahul Sharma</div>
+              <div class="preset-meta">
+                <span class="preset-type-pill pill-patient">Patient</span>
+                <span class="preset-id-text">ID: 401 &bull; Consultations</span>
+              </div>
+            </div>
+            <div class="preset-action-arrow">
+              <i class="fas fa-arrow-right"></i>
+            </div>
+          </div>
+        </div>
+
+        <!-- 3. Medicine -->
+        <div class="col-12 col-md-6 col-lg-4">
+          <div class="explorer-preset-card preset-medicine" 
+               id="preset-card-Medicine-501"
+               onclick="exploreEntityPreset('Medicine', '501', 'Dolo 650')"
+               role="button" tabindex="0">
+            <div class="preset-icon-box">
+              <i class="fas fa-pills"></i>
+            </div>
+            <div class="preset-info-box">
+              <div class="preset-title">Dolo 650</div>
+              <div class="preset-meta">
+                <span class="preset-type-pill pill-medicine">Medicine</span>
+                <span class="preset-id-text">ID: 501 &bull; Paracetamol</span>
+              </div>
+            </div>
+            <div class="preset-action-arrow">
+              <i class="fas fa-arrow-right"></i>
+            </div>
+          </div>
+        </div>
+
+        <!-- 4. Hospital -->
+        <div class="col-12 col-md-6 col-lg-4">
+          <div class="explorer-preset-card preset-hospital" 
+               id="preset-card-Hospital-202"
+               onclick="exploreEntityPreset('Hospital', '202', 'Manipal Hospital')"
+               role="button" tabindex="0">
+            <div class="preset-icon-box">
+              <i class="fas fa-hospital"></i>
+            </div>
+            <div class="preset-info-box">
+              <div class="preset-title">Manipal Hospital</div>
+              <div class="preset-meta">
+                <span class="preset-type-pill pill-hospital">Hospital</span>
+                <span class="preset-id-text">ID: 202 &bull; Bengaluru</span>
+              </div>
+            </div>
+            <div class="preset-action-arrow">
+              <i class="fas fa-arrow-right"></i>
+            </div>
+          </div>
+        </div>
+
+        <!-- 5. MedPlus Pharmacy -->
+        <div class="col-12 col-md-6 col-lg-4">
+          <div class="explorer-preset-card preset-pharmacy-medplus" 
+               id="preset-card-Pharmacy-102"
+               onclick="exploreEntityPreset('Pharmacy', '102', 'MedPlus Community Care')"
+               role="button" tabindex="0">
+            <div class="preset-icon-box">
+              <i class="fas fa-clinic-medical"></i>
+            </div>
+            <div class="preset-info-box">
+              <div class="preset-title">MedPlus Community Care</div>
+              <div class="preset-meta">
+                <span class="preset-type-pill pill-pharmacy">Pharmacy</span>
+                <span class="preset-id-text">ID: 102 &bull; Dispensary</span>
+              </div>
+            </div>
+            <div class="preset-action-arrow">
+              <i class="fas fa-arrow-right"></i>
+            </div>
+          </div>
+        </div>
+
+        <!-- 6. Apollo Pharmacy -->
+        <div class="col-12 col-md-6 col-lg-4">
+          <div class="explorer-preset-card preset-pharmacy-apollo" 
+               id="preset-card-Pharmacy-101"
+               onclick="exploreEntityPreset('Pharmacy', '101', 'Apollo HealthCity Pharmacy')"
+               role="button" tabindex="0">
+            <div class="preset-icon-box">
+              <i class="fas fa-hospital-alt"></i>
+            </div>
+            <div class="preset-info-box">
+              <div class="preset-title">Apollo HealthCity</div>
+              <div class="preset-meta">
+                <span class="preset-type-pill pill-pharmacy">Pharmacy</span>
+                <span class="preset-id-text">ID: 101 &bull; Central Hub</span>
+              </div>
+            </div>
+            <div class="preset-action-arrow">
+              <i class="fas fa-arrow-right"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Manual Select Form -->
+    <div class="row g-3 align-items-end pt-3 border-top" style="border-color: rgba(255, 255, 255, 0.08) !important;">
+      <div class="col-md-3">
+        <label class="form-label small fw-semibold text-light mb-1.5"><i class="fas fa-filter text-teal me-1.5"></i> Entity Category</label>
+        <select id="explorer-category-select" class="form-select explorer-select" onchange="onExplorerCategoryChange()">
+          <option value="Doctor">Doctor (Physician)</option>
+          <option value="Patient">Patient</option>
+          <option value="Medicine">Medicine (Drug)</option>
+          <option value="Hospital">Hospital</option>
+          <option value="Pharmacy">Pharmacy</option>
+        </select>
+      </div>
+
+      <div class="col-md-6">
+        <label class="form-label small fw-semibold text-light mb-1.5"><i class="fas fa-id-badge text-teal me-1.5"></i> Select Entity Instance</label>
+        <select id="explorer-instance-select" class="form-select explorer-select">
+          {% for d in doctors %}
+          <option value="{{ d.Doctor_ID }}" {% if d.Doctor_ID == 304 %}selected{% endif %}>Dr. {{ d.First_Name }} {{ d.Last_Name }} (ID: {{ d.Doctor_ID }})</option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <div class="col-md-3">
+        <button class="btn w-100 text-white fw-bold d-flex align-items-center justify-content-center gap-2 explorer-cta-btn" onclick="submitExplorerSearch()">
+          <i class="fas fa-project-diagram"></i> Explore Subgraph
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Explorer Visualization Canvas Card -->
+<div class="graph-card">
+  <div class="graph-card-header flex-wrap gap-2 py-2.5 px-3">
+    <div class="d-flex align-items-center gap-2">
+      <div class="graph-card-title mb-0 fs-6">
+        <i class="fas fa-project-diagram text-info me-1"></i> Subnetwork Neighborhood Map
+      </div>
+      <span class="badge shadow-sm" id="explorer-result-badge" style="background: rgba(2, 132, 199, 0.15); border: 1px solid rgba(2, 132, 199, 0.35); color: #7dd3fc; font-weight: 600;">
+        Ready to Explore
+      </span>
+    </div>
+
+    <!-- Floating Canvas Controls Toolbar -->
+    <div class="d-flex align-items-center flex-wrap gap-1.5">
+      <button class="canvas-action-btn" onclick="explorerControls.reCenterFocus()" title="Re-Center Camera on Focal Entity">
+        <i class="fas fa-crosshairs text-warning"></i> Center Focus
+      </button>
+      <button class="canvas-action-btn" onclick="explorerControls.fitView()" title="Fit entire network in view">
+        <i class="fas fa-expand-arrows-alt text-info"></i> Fit All
+      </button>
+      <div class="btn-group btn-group-sm" role="group">
+        <button class="canvas-action-btn" onclick="explorerControls.zoomIn()" title="Zoom In">
+          <i class="fas fa-plus"></i>
+        </button>
+        <button class="canvas-action-btn" onclick="explorerControls.zoomOut()" title="Zoom Out">
+          <i class="fas fa-minus"></i>
+        </button>
+      </div>
+      <button class="canvas-action-btn" id="btn-toggle-labels" onclick="explorerControls.toggleLabels()" title="Toggle Relationship Edge Labels">
+        <i class="fas fa-tag text-light opacity-75"></i> Edge Labels
+      </button>
+      <button class="canvas-action-btn" id="btn-toggle-physics" onclick="explorerControls.togglePhysics()" title="Freeze or unfreeze node physics simulation">
+        <i class="fas fa-pause text-muted"></i> Freeze
+      </button>
+    </div>
+  </div>
+
+  <!-- Entity Legend Bar with Interactive Spotlight Filtering -->
+  <div class="px-3 py-2 border-bottom border-secondary border-opacity-25 d-flex flex-wrap gap-2 align-items-center" style="background: rgba(11, 17, 34, 0.95) !important;">
+    <span class="fw-bold text-light small me-1"><i class="fas fa-palette text-teal me-1"></i> Legend:</span>
+    <button class="badge px-2.5 py-1.5 d-inline-flex align-items-center border-0" onclick="explorerControls.reCenterFocus()" style="background: rgba(245, 158, 11, 0.2); border: 1px solid #f59e0b !important; color: #fbbf24; font-size: 11.5px; cursor: pointer;" title="Center on Focal Node">
+      <span class="legend-dot me-1.5" style="background:#f59e0b; border: 2px solid #fff;"></span> Focal Center
+    </button>
+    <button class="badge px-2.5 py-1.5 d-inline-flex align-items-center border-0" onclick="spotlightByNodeType('Doctor')" style="background: rgba(79, 70, 229, 0.2); border: 1px solid #818cf8 !important; color: #c7d2fe; font-size: 11.5px; cursor: pointer;" title="Spotlight Doctors">
+      <span class="legend-dot me-1.5" style="background:#4f46e5; border: 1px solid #a5b4fc;"></span> Doctor
+    </button>
+    <button class="badge px-2.5 py-1.5 d-inline-flex align-items-center border-0" onclick="spotlightByNodeType('Patient')" style="background: rgba(13, 148, 136, 0.2); border: 1px solid #2dd4bf !important; color: #5eead4; font-size: 11.5px; cursor: pointer;" title="Spotlight Patients">
+      <span class="legend-dot me-1.5" style="background:#0d9488; border: 1px solid #2dd4bf;"></span> Patient
+    </button>
+    <button class="badge px-2.5 py-1.5 d-inline-flex align-items-center border-0" onclick="spotlightByNodeType('Prescription')" style="background: rgba(217, 119, 6, 0.2); border: 1px solid #fbbf24 !important; color: #fde68a; font-size: 11.5px; cursor: pointer;" title="Spotlight Prescriptions">
+      <span class="legend-dot me-1.5" style="background:#d97706; border: 1px solid #fef08a;"></span> Prescription
+    </button>
+    <button class="badge px-2.5 py-1.5 d-inline-flex align-items-center border-0" onclick="spotlightByNodeType('Medicine')" style="background: rgba(5, 150, 105, 0.2); border: 1px solid #34d399 !important; color: #a7f3d0; font-size: 11.5px; cursor: pointer;" title="Spotlight Medicines">
+      <span class="legend-dot me-1.5" style="background:#059669; border: 1px solid #6ee7b7;"></span> Medicine
+    </button>
+    <button class="badge px-2.5 py-1.5 d-inline-flex align-items-center border-0" onclick="spotlightByNodeType('Hospital')" style="background: rgba(124, 58, 237, 0.2); border: 1px solid #a78bfa !important; color: #ddd6fe; font-size: 11.5px; cursor: pointer;" title="Spotlight Hospitals">
+      <span class="legend-dot me-1.5" style="background:#7c3aed; border: 1px solid #c4b5fd;"></span> Hospital
+    </button>
+    <button class="badge px-2.5 py-1.5 d-inline-flex align-items-center border-0" onclick="spotlightByNodeType('Pharmacy')" style="background: rgba(2, 132, 199, 0.2); border: 1px solid #38bdf8 !important; color: #bae6fd; font-size: 11.5px; cursor: pointer;" title="Spotlight Pharmacies">
+      <span class="legend-dot me-1.5" style="background:#0284c7; border: 1px solid #7dd3fc;"></span> Pharmacy
+    </button>
+    <button class="badge px-2.5 py-1.5 d-inline-flex align-items-center border-0" onclick="spotlightByNodeType('Pharmacist')" style="background: rgba(219, 39, 119, 0.2); border: 1px solid #f472b6 !important; color: #fbcfe8; font-size: 11.5px; cursor: pointer;" title="Spotlight Pharmacists">
+      <span class="legend-dot me-1.5" style="background:#db2777; border: 1px solid #f9a8d4;"></span> Pharmacist
+    </button>
+    <button class="btn btn-xs py-1 px-2.5 text-muted border border-secondary border-opacity-40 rounded-pill ms-auto" onclick="resetSpotlight()" title="Reset spotlight highlight">
+      <i class="fas fa-undo me-1 text-teal"></i> Reset View
+    </button>
+  </div>
+
+  <div class="graph-card-body p-0 position-relative">
+    <div id="explorer-canvas" class="vis-network-canvas" style="height: 580px;">
+      <div class="position-absolute top-50 start-50 translate-middle text-center text-muted" id="explorer-placeholder-text">
+        <i class="fas fa-compass fa-3x mb-3 text-info opacity-75"></i>
+        <h5 class="text-light fw-bold">Interactive Subgraph Explorer</h5>
+        <div class="small text-muted mb-3">Select an entity above or pick a curated focal entity to map its clinical ecosystem.</div>
+        <button class="btn btn-sm btn-outline-teal px-3" onclick="exploreEntityPreset('Doctor', '304', 'Dr. Pooja Rao')">
+          <i class="fas fa-user-md me-1"></i> Explore Dr. Pooja Rao (ID: 304)
+        </button>
+      </div>
+    </div>
+
+    <!-- Connected Relationships Summary List -->
+    <div class="p-3 border-top border-secondary border-opacity-25" id="explorer-summary-section" style="display:none;">
+      <div id="explorer-hero-banner" class="mb-4"></div>
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <h6 class="fw-bold text-info mb-0">
+          <i class="fas fa-network-wired me-1"></i> Traversed Relational Connections &amp; Ecosystem
+        </h6>
+        <span class="badge bg-secondary text-light small" id="explorer-stats-pill"></span>
+      </div>
+      <div class="row g-3" id="explorer-neighbors-cards"></div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  // Initial entity lookup data synchronized with DB
+  window.EXPLORER_DATA = {
+    Doctor: [
+      {% for d in doctors %}
+      { id: '{{ d.Doctor_ID }}', label: 'Dr. {{ d.First_Name }} {{ d.Last_Name }} (ID: {{ d.Doctor_ID }})' },
+      {% endfor %}
+    ],
+    Patient: [
+      {% for p in patients %}
+      { id: '{{ p.Patient_ID }}', label: '{{ p.First_Name }} {{ p.Last_Name }} (ID: {{ p.Patient_ID }} - {{ p.City }})' },
+      {% endfor %}
+    ],
+    Medicine: [
+      {% for m in medicines %}
+      { id: '{{ m.Medicine_ID }}', label: '{{ m.Name }} (ID: {{ m.Medicine_ID }})' },
+      {% endfor %}
+    ],
+    Hospital: [
+      { id: '201', label: 'Lilavati Hospital & Research Centre (ID: 201 - Mumbai)' },
+      { id: '202', label: 'Manipal Hospital Bengaluru (ID: 202 - Bengaluru)' },
+      { id: '203', label: 'AIIMS Apex Trauma & Medical Center (ID: 203 - New Delhi)' }
+    ],
+    Pharmacy: [
+      {% for ph in pharmacies %}
+      { id: '{{ ph.Pharmacy_ID }}', label: '{{ ph.Name }} (ID: {{ ph.Pharmacy_ID }} - {{ ph.City }})' },
+      {% endfor %}
+    ]
+  };
+</script>
+<script src="{{ url_for('static', filename='js/graph_explorer.js') }}?v=5.3"></script>
+{% endblock %}

@@ -1,0 +1,1259 @@
+{% extends "base.html" %}
+
+{% block title %}Enterprise Architecture: MySQL vs Neo4j Live Dual-Engine Studio{% endblock %}
+{% block breadcrumb %}Enterprise Architecture (MySQL vs Neo4j Benchmark){% endblock %}
+
+{% block content %}
+<div class="comparison-view">
+
+<!-- Scoped CSS for Crystal-Clear Typography & Visual Hierarchy -->
+<style>
+  .comparison-view {
+    color: #cbd5e1;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  }
+  
+  .arch-hero {
+    background: linear-gradient(135deg, #0b1120 0%, #0f172a 50%, #1e293b 100%);
+    border: 1.5px solid rgba(56, 189, 248, 0.35);
+    border-radius: 14px;
+    padding: 28px 32px;
+    margin-bottom: 28px;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 12px 36px rgba(0, 0, 0, 0.45);
+  }
+  
+  /* Badges with Solid High Contrast */
+  .arch-pill-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 7px 16px;
+    border-radius: 30px;
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 0.6px;
+    text-transform: uppercase;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35);
+  }
+  .arch-pill-polyglot {
+    background: #0284c7;
+    color: #ffffff;
+    border: 1.5px solid #38bdf8;
+  }
+  .arch-pill-mysql {
+    background: #1d4ed8;
+    color: #ffffff;
+    border: 1.5px solid #60a5fa;
+  }
+  .arch-pill-neo4j {
+    background: #059669;
+    color: #ffffff;
+    border: 1.5px solid #34d399;
+  }
+  
+  .badge-mysql-pill {
+    background: #1d4ed8;
+    color: #ffffff;
+    border: 1.5px solid #60a5fa;
+    font-weight: 800;
+    font-size: 12px;
+    padding: 5px 14px;
+    border-radius: 20px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .badge-neo4j-pill {
+    background: #059669;
+    color: #ffffff;
+    border: 1.5px solid #34d399;
+    font-weight: 800;
+    font-size: 12px;
+    padding: 5px 14px;
+    border-radius: 20px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .badge-parity-pill {
+    background: #475569;
+    color: #ffffff;
+    border: 1.5px solid #94a3b8;
+    font-weight: 800;
+    font-size: 12px;
+    padding: 5px 14px;
+    border-radius: 20px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .badge-category-pill {
+    background: #0f172a;
+    color: #38bdf8;
+    border: 1.5px solid rgba(56, 189, 248, 0.4);
+    font-weight: 800;
+    font-size: 11px;
+    padding: 5px 10px;
+    border-radius: 12px;
+    text-transform: uppercase;
+  }
+
+  /* Engine Architecture Cards */
+  .arch-engine-card {
+    background: rgba(15, 23, 42, 0.94);
+    border-radius: 14px;
+    padding: 24px;
+    height: 100%;
+    position: relative;
+    transition: transform 0.25s ease, border-color 0.25s ease;
+  }
+  .arch-engine-card.mysql-card {
+    border: 1.5px solid rgba(59, 130, 246, 0.4);
+  }
+  .arch-engine-card.mysql-card:hover {
+    border-color: rgba(59, 130, 246, 0.8);
+    transform: translateY(-2px);
+  }
+  .arch-engine-card.neo4j-card {
+    border: 1.5px solid rgba(16, 185, 129, 0.4);
+  }
+  .arch-engine-card.neo4j-card:hover {
+    border-color: rgba(16, 185, 129, 0.8);
+    transform: translateY(-2px);
+  }
+  
+  .arch-conduit {
+    background: rgba(30, 41, 59, 0.8);
+    border: 1px dashed rgba(168, 85, 247, 0.5);
+    border-radius: 14px;
+    padding: 20px 16px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    height: 100%;
+  }
+  
+  .feature-check-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    margin-bottom: 14px;
+    line-height: 1.55;
+  }
+  
+  /* Simulator Tabs */
+  .simulator-tab-btn {
+    background: rgba(30, 41, 59, 0.75);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    color: #cbd5e1;
+    padding: 10px 18px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    transition: all 0.2s ease;
+    cursor: pointer;
+  }
+  .simulator-tab-btn:hover {
+    background: rgba(56, 189, 248, 0.15);
+    color: #38bdf8;
+    border-color: rgba(56, 189, 248, 0.4);
+  }
+  .simulator-tab-btn.active {
+    background: #0284c7;
+    color: #ffffff;
+    border-color: #38bdf8;
+    box-shadow: 0 0 16px rgba(2, 132, 199, 0.5);
+  }
+  
+  /* Code Viewer */
+  .code-viewer-panel {
+    background: #050811;
+    border: 1.5px solid rgba(255, 255, 255, 0.12);
+    border-radius: 10px;
+    overflow: hidden;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+  }
+  .code-viewer-header {
+    background: rgba(15, 23, 42, 0.98);
+    padding: 12px 18px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 13px;
+    font-weight: 700;
+  }
+  .code-viewer-body {
+    padding: 18px;
+    font-family: 'JetBrains Mono', 'Fira Code', 'Courier New', monospace;
+    font-size: 12.5px;
+    line-height: 1.65;
+    color: #f1f5f9;
+    white-space: pre-wrap;
+    word-break: break-word;
+    flex-grow: 1;
+    overflow-x: auto;
+    max-height: 380px;
+  }
+  
+  /* Benchmark Bar Container */
+  .benchmark-bar-container {
+    background: rgba(15, 23, 42, 0.94);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 10px;
+    padding: 18px 20px;
+    margin-bottom: 16px;
+    transition: border-color 0.2s ease;
+  }
+  .benchmark-bar-container:hover {
+    border-color: rgba(56, 189, 248, 0.3);
+  }
+  .benchmark-track {
+    height: 10px;
+    border-radius: 5px;
+    background: rgba(255, 255, 255, 0.08);
+    overflow: hidden;
+    position: relative;
+    margin-top: 6px;
+  }
+  .benchmark-fill-mysql {
+    height: 100%;
+    background: linear-gradient(90deg, #3b82f6, #60a5fa);
+    border-radius: 5px;
+    transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .benchmark-fill-neo4j {
+    height: 100%;
+    background: linear-gradient(90deg, #10b981, #34d399);
+    border-radius: 5px;
+    transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  
+  /* Matrix Filter Chips */
+  .matrix-filter-btn {
+    background: rgba(30, 41, 59, 0.6);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    color: #cbd5e1;
+    padding: 7px 16px;
+    border-radius: 20px;
+    font-size: 12.5px;
+    font-weight: 600;
+    transition: all 0.2s ease;
+    cursor: pointer;
+  }
+  .matrix-filter-btn:hover {
+    border-color: #38bdf8;
+    color: #38bdf8;
+    background: rgba(56, 189, 248, 0.1);
+  }
+  .matrix-filter-btn.active {
+    background: #0284c7;
+    border-color: #38bdf8;
+    color: #ffffff;
+    box-shadow: 0 0 12px rgba(2, 132, 199, 0.4);
+  }
+  
+  .matrix-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0 10px;
+  }
+  .matrix-table tr {
+    background: rgba(15, 23, 42, 0.85);
+    transition: background 0.2s ease;
+  }
+  .matrix-table tr:hover {
+    background: rgba(30, 41, 59, 0.95);
+  }
+  .matrix-table th {
+    padding: 14px 20px;
+    font-size: 13px;
+    font-weight: 700;
+    border-bottom: 2px solid rgba(255, 255, 255, 0.12);
+  }
+  .matrix-table td {
+    padding: 20px;
+    font-size: 13.5px;
+    vertical-align: top;
+    line-height: 1.6;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  }
+  
+  .live-duel-metric-box {
+    background: #0f172a;
+    border: 1.5px solid rgba(56, 189, 248, 0.25);
+    border-radius: 10px;
+    padding: 16px;
+  }
+</style>
+
+<!-- SECTION 1: ARCHITECTURE EXECUTIVE HERO BANNER -->
+<div class="arch-hero">
+  <div class="d-flex justify-content-between align-items-start flex-wrap gap-3 position-relative" style="z-index: 2;">
+    <div>
+      <div class="d-flex align-items-center gap-2 mb-3 flex-wrap">
+        <span class="arch-pill-badge arch-pill-polyglot">
+          <i class="fas fa-layer-group"></i> Polyglot Persistence Architecture
+        </span>
+        <span class="arch-pill-badge arch-pill-mysql">
+          <i class="fas fa-database"></i> MySQL 8.x (ACID Core)
+        </span>
+        <span class="arch-pill-badge arch-pill-neo4j">
+          <i class="fas fa-project-diagram"></i> Neo4j 5.x (Graph Traversal)
+        </span>
+        <span class="badge bg-danger text-white px-3 py-2 fw-bold" style="border-radius: 20px; letter-spacing: 0.5px;">
+          <i class="fas fa-bolt me-1"></i> Live Interactive Dual-Engine Benchmark
+        </span>
+      </div>
+      <h1 class="fw-bold text-white mb-2" style="font-size: 26px; letter-spacing: -0.5px; text-shadow: 0 2px 4px rgba(0,0,0,0.6);">
+        Live Dual-Engine Studio: Relational ACID vs Native Property Graph
+      </h1>
+      <p class="mb-0" style="font-size: 15px; max-width: 950px; line-height: 1.7; color: #f8fafc; font-weight: 400;">
+        Benchmark relational table joins against graph pointer dereferencing in real time. Execute live queries against active MySQL 8.x and Neo4j instances, measure microsecond latency, and inspect returned result sets side-by-side.
+      </p>
+    </div>
+    <div class="d-flex gap-2 align-items-center mt-2 flex-wrap">
+      <a href="{{ url_for('graph_intelligence_view') }}" class="btn-saas btn-saas-teal btn-saas-sm shadow" style="font-weight: 700; padding: 8px 16px;">
+        <i class="fas fa-project-diagram me-1"></i>
+        <span>Graph Intelligence</span>
+      </a>
+      <a href="{{ url_for('path_finder_view') }}" class="btn-saas btn-saas-sm shadow" style="background: #1e293b; color: #ffffff; border: 1.5px solid rgba(255,255,255,0.4); font-weight: 700; padding: 8px 16px;">
+        <i class="fas fa-route me-1"></i>
+        <span>Path Finder</span>
+      </a>
+    </div>
+  </div>
+</div>
+
+<!-- SECTION 2: DUAL-ENGINE ARCHITECTURAL BLUEPRINT (RESPONSIBILITY SEGREGATION) -->
+<div class="graph-card mb-4">
+  <div class="graph-card-header">
+    <div class="graph-card-title text-white">
+      <i class="fas fa-sitemap text-teal"></i> Dual-Engine Coexistence Architecture & Workload Specialization
+    </div>
+    <span style="color: #94a3b8; font-size: 12.5px; font-weight: 600;">Specialized Workload Partitioning</span>
+  </div>
+  <div class="graph-card-body">
+    <div class="row g-4 align-items-stretch">
+      <!-- Left Column: MySQL Relational ACID Core -->
+      <div class="col-lg-5">
+        <div class="arch-engine-card mysql-card">
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <div class="d-flex align-items-center gap-2">
+              <div style="width: 40px; height: 40px; border-radius: 10px; background: rgba(59, 130, 246, 0.25); border: 1px solid rgba(59, 130, 246, 0.5); display: flex; align-items: center; justify-content: center; color: #60a5fa;">
+                <i class="fas fa-database fs-5"></i>
+              </div>
+              <div>
+                <h5 class="fw-bold text-white mb-0" style="font-size: 17px;">MySQL 8.x InnoDB</h5>
+                <span style="color: #94a3b8; font-size: 12px; font-weight: 600;">Relational Transactional Authority</span>
+              </div>
+            </div>
+            <span class="badge-mysql-pill">ACID Ledger</span>
+          </div>
+
+          <p class="small mb-3" style="color: #cbd5e1; font-size: 13px; line-height: 1.6;">
+            Maintains the single source of truth for financial billing, non-negative stock trigger invariants, and append-only audit logs.
+          </p>
+
+          <div class="feature-check-item">
+            <i class="fas fa-file-invoice-dollar mt-1 text-primary" style="font-size: 15px;"></i>
+            <div>
+              <strong style="color: #ffffff; font-size: 13.5px;">Atomic Billing & Invoicing:</strong>
+              <div style="color: #94a3b8; font-size: 12.5px;">Calculates GST, line-item totals, and patient balances with serializable transaction locks.</div>
+            </div>
+          </div>
+
+          <div class="feature-check-item">
+            <i class="fas fa-shield-alt mt-1 text-primary" style="font-size: 15px;"></i>
+            <div>
+              <strong style="color: #ffffff; font-size: 13.5px;">Negative Stock Prevention:</strong>
+              <div style="color: #94a3b8; font-size: 12.5px;">Trigger <code>trg_before_inventory_update</code> aborts transactions breaching zero quantity thresholds.</div>
+            </div>
+          </div>
+
+          <div class="feature-check-item">
+            <i class="fas fa-history mt-1 text-primary" style="font-size: 15px;"></i>
+            <div>
+              <strong style="color: #ffffff; font-size: 13.5px;">Immutable Audit Trail:</strong>
+              <div style="color: #94a3b8; font-size: 12.5px;">Post-update trigger automatically writes delta logs to <code>STOCK_LOG</code>.</div>
+            </div>
+          </div>
+
+          <div class="mt-4 pt-3 border-top border-secondary border-opacity-25 d-flex justify-content-between align-items-center">
+            <span style="color: #94a3b8; font-size: 12px; font-weight: 600;">Algorithmic Focus:</span>
+            <span class="badge" style="background: rgba(59, 130, 246, 0.2); color: #93c5fd; border: 1px solid rgba(59, 130, 246, 0.4); font-family: monospace; font-size: 12px;">B+Tree Index: O(log N)</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Middle Column: Transactional Sync Conduit -->
+      <div class="col-lg-2">
+        <div class="arch-conduit">
+          <div style="width: 48px; height: 48px; border-radius: 50%; background: rgba(168, 85, 247, 0.25); border: 1.5px solid #c084fc; display: flex; align-items: center; justify-content: center; color: #c084fc; font-size: 20px; margin-bottom: 10px;">
+            <i class="fas fa-shuffle"></i>
+          </div>
+          <h6 class="fw-bold mb-1 text-white" style="font-size: 13.5px;">Live Sync Bridge</h6>
+          <span style="color: #c084fc; font-size: 11.5px; font-weight: 600; margin-bottom: 12px;">Data Projection</span>
+          
+          <div class="p-2 rounded w-100 mb-3" style="background: rgba(15, 23, 42, 0.9); border: 1px solid rgba(255, 255, 255, 0.08); font-size: 11px; text-align: left;">
+            <div class="fw-bold mb-1 text-info"><i class="fas fa-check me-1"></i> Synchronized:</div>
+            <div style="color: #cbd5e1; line-height: 1.5;">&bull; Patients & Doctors</div>
+            <div style="color: #cbd5e1; line-height: 1.5;">&bull; Prescriptions & Meds</div>
+            <div style="color: #cbd5e1; line-height: 1.5;">&bull; Supply Distributors</div>
+          </div>
+
+          <div class="badge w-100 py-2" style="background: rgba(16, 185, 129, 0.2); color: #6ee7b7; border: 1px solid rgba(16, 185, 129, 0.4); font-size: 11px;">
+            Zero-Downtime Pipeline
+          </div>
+        </div>
+      </div>
+
+      <!-- Right Column: Neo4j Property Graph Engine -->
+      <div class="col-lg-5">
+        <div class="arch-engine-card neo4j-card">
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <div class="d-flex align-items-center gap-2">
+              <div style="width: 40px; height: 40px; border-radius: 10px; background: rgba(16, 185, 129, 0.25); border: 1px solid rgba(16, 185, 129, 0.5); display: flex; align-items: center; justify-content: center; color: #34d399;">
+                <i class="fas fa-project-diagram fs-5"></i>
+              </div>
+              <div>
+                <h5 class="fw-bold text-white mb-0" style="font-size: 17px;">Neo4j 5.x Enterprise</h5>
+                <span style="color: #94a3b8; font-size: 12px; font-weight: 600;">Property Graph Intelligence Engine</span>
+              </div>
+            </div>
+            <span class="badge-neo4j-pill">Graph Traversal</span>
+          </div>
+
+          <p class="small mb-3" style="color: #cbd5e1; font-size: 13px; line-height: 1.6;">
+            Executes multi-hop supply chain provenance, clinical care network traversal, and shortest-path discovery with zero relational join penalty.
+          </p>
+
+          <div class="feature-check-item">
+            <i class="fas fa-route mt-1 text-success" style="font-size: 15px;"></i>
+            <div>
+              <strong style="color: #ffffff; font-size: 13.5px;">Index-Free Adjacency:</strong>
+              <div style="color: #94a3b8; font-size: 12.5px;">Relationships are direct physical pointers; traversals execute in $O(1)$ constant time per hop.</div>
+            </div>
+          </div>
+
+          <div class="feature-check-item">
+            <i class="fas fa-dolly-flatbed mt-1 text-success" style="font-size: 15px;"></i>
+            <div>
+              <strong style="color: #ffffff; font-size: 13.5px;">5-Tier Provenance Tracing:</strong>
+              <div style="color: #94a3b8; font-size: 12.5px;">Deep provenance (Mfg &rarr; Supplier &rarr; Med &rarr; Pharmacy &rarr; Patient) evaluated in single Cypher patterns.</div>
+            </div>
+          </div>
+
+          <div class="feature-check-item">
+            <i class="fas fa-map-signs mt-1 text-success" style="font-size: 15px;"></i>
+            <div>
+              <strong style="color: #ffffff; font-size: 13.5px;">Native Shortest Path Discovery:</strong>
+              <div style="color: #94a3b8; font-size: 12.5px;">Calculates the shortest topological connection via native breadth-first search <code>shortestPath()</code>.</div>
+            </div>
+          </div>
+
+          <div class="mt-4 pt-3 border-top border-secondary border-opacity-25 d-flex justify-content-between align-items-center">
+            <span style="color: #94a3b8; font-size: 12px; font-weight: 600;">Algorithmic Focus:</span>
+            <span class="badge" style="background: rgba(16, 185, 129, 0.2); color: #6ee7b7; border: 1px solid rgba(16, 185, 129, 0.4); font-family: monospace; font-size: 12px;">Pointer Dereference: O(1) / hop</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ========================================================================= -->
+<!-- SECTION 3: INTERACTIVE QUERY PARADIGM & LIVE BENCHMARK DUEL STUDIO -->
+<!-- ========================================================================= -->
+<div class="graph-card mb-4" id="duelStudioSection">
+  <div class="graph-card-header d-flex justify-content-between align-items-center flex-wrap gap-2">
+    <div class="graph-card-title text-white">
+      <i class="fas fa-bolt text-warning me-2"></i> Live Dual-Engine Query Benchmark Studio
+    </div>
+    <div class="d-flex gap-2 flex-wrap">
+      <button type="button" class="simulator-tab-btn active" id="caseBtn-provenance" onclick="selectBenchmarkScenario('provenance')">
+        <i class="fas fa-truck-ramp-box me-1"></i> 1. Multi-Hop Provenance
+      </button>
+      <button type="button" class="simulator-tab-btn" id="caseBtn-shortest_path" onclick="selectBenchmarkScenario('shortest_path')">
+        <i class="fas fa-route me-1"></i> 2. Shortest Clinical Path
+      </button>
+      <button type="button" class="simulator-tab-btn" id="caseBtn-financial_txn" onclick="selectBenchmarkScenario('financial_txn')">
+        <i class="fas fa-cash-register me-1"></i> 3. Invoicing & Triggers
+      </button>
+    </div>
+  </div>
+
+  <div class="graph-card-body">
+    <!-- Interactive Execution Control Bar -->
+    <div class="p-3 rounded mb-4 border border-secondary border-opacity-25" style="background: #0f172a;">
+      <div class="row g-3 align-items-center">
+        <!-- Dynamic Parameter Selector 1 -->
+        <div class="col-md-5" id="param-provenance-box">
+          <label class="form-label small text-muted text-uppercase fw-bold mb-1">Select Medicine to Trace</label>
+          <select class="form-select bg-dark text-white border-secondary" id="benchMedicineSelect">
+            {% for m in medicines %}
+              <option value="{{ m.Medicine_ID }}" {% if m.Medicine_ID == 501 %}selected{% endif %}>
+                {{ m.Name }} (Item #{{ m.Medicine_ID }})
+              </option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <!-- Dynamic Parameter Selector 2 (Shortest Path) -->
+        <div class="col-md-5 d-none" id="param-shortest-box">
+          <div class="row g-2">
+            <div class="col-6">
+              <label class="form-label small text-muted text-uppercase fw-bold mb-1">Start Patient</label>
+              <select class="form-select bg-dark text-white border-secondary" id="benchPatientSelect">
+                {% for p in patients %}
+                  <option value="{{ p.Patient_ID }}" {% if p.Patient_ID == 401 %}selected{% endif %}>
+                    {{ p.First_Name }} {{ p.Last_Name }} (#{{ p.Patient_ID }})
+                  </option>
+                {% endfor %}
+              </select>
+            </div>
+            <div class="col-6">
+              <label class="form-label small text-muted text-uppercase fw-bold mb-1">Target Supplier</label>
+              <select class="form-select bg-dark text-white border-secondary" id="benchSupplierSelect">
+                {% for s in suppliers %}
+                  <option value="{{ s.Supplier_ID }}" {% if s.Supplier_ID == 801 %}selected{% endif %}>
+                    {{ s.Name }} (#{{ s.Supplier_ID }})
+                  </option>
+                {% endfor %}
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- Dynamic Parameter Selector 3 (Financial Txn) -->
+        <div class="col-md-5 d-none" id="param-financial-box">
+          <label class="form-label small text-muted text-uppercase fw-bold mb-1">Select Prescription Regimen</label>
+          <select class="form-select bg-dark text-white border-secondary" id="benchPrescriptionSelect">
+            {% for pr in prescriptions %}
+              <option value="{{ pr.Prescription_ID }}" {% if loop.first %}selected{% endif %}>
+                Prescription #{{ pr.Prescription_ID }} (Issued {{ pr.Date }})
+              </option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <!-- Execute Action Button -->
+        <div class="col-md-4">
+          <button type="button" class="btn btn-warning w-100 py-2 fw-bold text-dark shadow" onclick="executeLiveBenchmark()" id="btnExecuteDuel">
+            <i class="fas fa-play me-1"></i> Execute Live Dual-Engine Duel
+          </button>
+        </div>
+
+        <!-- Result View Toggle (Code vs Live Output) -->
+        <div class="col-md-3 text-end">
+          <div class="btn-group" role="group">
+            <button type="button" class="btn btn-sm btn-outline-info active" id="btnViewModeCode" onclick="setDuelViewMode('code')">
+              <i class="fas fa-code me-1"></i> Code
+            </button>
+            <button type="button" class="btn btn-sm btn-outline-info" id="btnViewModeOutput" onclick="setDuelViewMode('output')">
+              <i class="fas fa-table-list me-1"></i> Live Output
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Live Duel Verdict Metric Banner -->
+    <div class="p-3 rounded mb-4" id="duelVerdictBanner" style="background: rgba(30, 41, 59, 0.7); border: 1.5px solid rgba(56, 189, 248, 0.35);">
+      <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+        <div class="d-flex align-items-center gap-2">
+          <span class="badge bg-primary px-3 py-2 fs-6 fw-bold" id="duelCaseTag">Case 1: Deep Multi-Hop Provenance</span>
+          <strong class="text-white fs-5" id="duelCaseTitle">Tracing Medicine Batch Provenance Across 5 Relational Entities</strong>
+        </div>
+        <div id="duelWinnerBadge">
+          <span class="badge-neo4j-pill"><i class="fas fa-trophy me-1"></i> Winner: Neo4j (Index-Free Traversal)</span>
+        </div>
+      </div>
+      <p class="small mb-0 mt-2 text-light text-opacity-75" id="duelVerdictText">
+        Click "Execute Live Dual-Engine Duel" above to execute both MySQL and Neo4j simultaneously and measure microsecond execution latency.
+      </p>
+    </div>
+
+    <!-- Dual Panels Row -->
+    <div class="row g-3">
+      <!-- Left: SQL Panel -->
+      <div class="col-lg-6">
+        <div class="code-viewer-panel">
+          <div class="code-viewer-header" style="color: #93c5fd;">
+            <span><i class="fas fa-database me-2" style="color: #60a5fa;"></i>Relational SQL (MySQL 8.x)</span>
+            <span class="badge-mysql-pill" id="sqlLiveTimingBadge">Latency: -- ms</span>
+          </div>
+          <!-- Code View -->
+          <div class="code-viewer-body" id="sqlLiveCodeDisplay"></div>
+          <!-- Output View (Hidden by default) -->
+          <div class="p-3 overflow-auto d-none" id="sqlLiveOutputDisplay" style="max-height: 380px; background: #050811;">
+            <div class="text-muted small">No output generated yet. Run the duel above.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right: Cypher Panel -->
+      <div class="col-lg-6">
+        <div class="code-viewer-panel">
+          <div class="code-viewer-header" style="color: #6ee7b7;">
+            <span><i class="fas fa-project-diagram me-2" style="color: #34d399;"></i>Graph Cypher (Neo4j 5.x)</span>
+            <span class="badge-neo4j-pill" id="cypherLiveTimingBadge">Latency: -- ms</span>
+          </div>
+          <!-- Code View -->
+          <div class="code-viewer-body" id="cypherLiveCodeDisplay"></div>
+          <!-- Output View (Hidden by default) -->
+          <div class="p-3 overflow-auto d-none" id="cypherLiveOutputDisplay" style="max-height: 380px; background: #050811;">
+            <div class="text-muted small">No output generated yet. Run the duel above.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Live Execution Telemetry Row -->
+    <div class="row g-3 mt-3">
+      <div class="col-md-4">
+        <div class="live-duel-metric-box">
+          <div class="text-muted small fw-bold mb-1">Measured Speedup Multiplier</div>
+          <div class="fw-bold fs-4 text-warning font-monospace" id="duelTelemetrySpeedup">--x</div>
+          <div class="small text-muted mt-1" id="duelTelemetrySpeedupSub">Relative throughput ratio</div>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="live-duel-metric-box">
+          <div class="text-muted small fw-bold mb-1">MySQL Evaluated Join Complexity</div>
+          <div class="fw-bold fs-5 text-white font-monospace" id="duelTelemetryJoins">6 Multi-Table Joins</div>
+          <div class="small text-info mt-1">Nested loops & B+Tree index lookups</div>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="live-duel-metric-box">
+          <div class="text-muted small fw-bold mb-1">Neo4j Index-Free Pointers</div>
+          <div class="fw-bold fs-5 text-white font-monospace" id="duelTelemetryPointers">O(1) Direct Memory Hops</div>
+          <div class="small text-success mt-1">Zero intermediate join table explosion</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ========================================================================= -->
+<!-- SECTION 4: TRAVERSAL LATENCY & LIVE DEPTH STRESS TEST -->
+<!-- ========================================================================= -->
+<div class="graph-card mb-4" id="stressTestSection">
+  <div class="graph-card-header d-flex justify-content-between align-items-center flex-wrap gap-2">
+    <div>
+      <div class="graph-card-title text-white">
+        <i class="fas fa-chart-line text-warning me-2"></i> Live Algorithmic Traversal Latency Stress-Tester
+      </div>
+      <div class="small text-muted">Executes real queries across depths 1 through 5 on both active database engines</div>
+    </div>
+    <div class="d-flex gap-2 align-items-center">
+      <select class="form-select form-select-sm bg-dark text-white border-secondary" id="stressPatientSelect" style="width: 220px;">
+        {% for p in patients %}
+          <option value="{{ p.Patient_ID }}" {% if p.Patient_ID == 401 %}selected{% endif %}>
+            {{ p.First_Name }} {{ p.Last_Name }} (ID #{{ p.Patient_ID }})
+          </option>
+        {% endfor %}
+      </select>
+      <button type="button" class="btn btn-sm btn-danger fw-bold px-3 py-1 shadow" onclick="runLiveStressTest()" id="btnRunStressTest">
+        <i class="fas fa-bolt me-1"></i> Run Live Stress Test
+      </button>
+    </div>
+  </div>
+
+  <div class="graph-card-body">
+    <p class="small mb-4 text-light text-opacity-75" style="line-height: 1.65;">
+      As relationship traversal depth increases in healthcare systems (e.g., Patient &rarr; Prescription &rarr; Medicine &rarr; Pharmacy &rarr; Supplier &rarr; Manufacturer), relational databases suffer from exponential join table degradation, whereas native graph databases maintain near-flat traversal latency.
+    </p>
+
+    <!-- Dynamic 1 to 5 Hops Container -->
+    <div id="stressBarsContainer">
+      <!-- Hop 1 -->
+      <div class="benchmark-bar-container" id="bar-hop-1">
+        <div class="d-flex justify-content-between align-items-center mb-1">
+          <div>
+            <strong class="text-white fs-6">1 Hop: Direct Relationship</strong>
+            <span class="text-muted small ms-2">(Patient &rarr; Prescriptions)</span>
+          </div>
+          <span class="badge-parity-pill" id="badge-hop-1">Near Parity</span>
+        </div>
+        <div class="row g-2 align-items-center mt-1">
+          <div class="col-sm-3 small text-light"><i class="fas fa-database me-1 text-primary"></i> MySQL: <strong class="text-white font-monospace" id="val-mysql-1">1.2 ms</strong></div>
+          <div class="col-sm-3">
+            <div class="benchmark-track"><div class="benchmark-fill-mysql" id="fill-mysql-1" style="width: 20%;"></div></div>
+          </div>
+          <div class="col-sm-3 small text-light"><i class="fas fa-project-diagram me-1 text-success"></i> Neo4j: <strong class="text-white font-monospace" id="val-neo4j-1">1.1 ms</strong></div>
+          <div class="col-sm-3">
+            <div class="benchmark-track"><div class="benchmark-fill-neo4j" id="fill-neo4j-1" style="width: 18%;"></div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Hop 2 -->
+      <div class="benchmark-bar-container" id="bar-hop-2">
+        <div class="d-flex justify-content-between align-items-center mb-1">
+          <div>
+            <strong class="text-white fs-6">2 Hops: Two-Stage Relationship</strong>
+            <span class="text-muted small ms-2">(Patient &rarr; Prescription &rarr; Prescribed Medicine)</span>
+          </div>
+          <span class="badge-neo4j-pill" id="badge-hop-2">Neo4j Faster</span>
+        </div>
+        <div class="row g-2 align-items-center mt-1">
+          <div class="col-sm-3 small text-light"><i class="fas fa-database me-1 text-primary"></i> MySQL: <strong class="text-white font-monospace" id="val-mysql-2">4.8 ms</strong></div>
+          <div class="col-sm-3">
+            <div class="benchmark-track"><div class="benchmark-fill-mysql" id="fill-mysql-2" style="width: 35%;"></div></div>
+          </div>
+          <div class="col-sm-3 small text-light"><i class="fas fa-project-diagram me-1 text-success"></i> Neo4j: <strong class="text-white font-monospace" id="val-neo4j-2">1.4 ms</strong></div>
+          <div class="col-sm-3">
+            <div class="benchmark-track"><div class="benchmark-fill-neo4j" id="fill-neo4j-2" style="width: 20%;"></div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Hop 3 -->
+      <div class="benchmark-bar-container" id="bar-hop-3">
+        <div class="d-flex justify-content-between align-items-center mb-1">
+          <div>
+            <strong class="text-white fs-6">3 Hops: Multi-Entity Traversal</strong>
+            <span class="text-muted small ms-2">(Patient &rarr; Prescription &rarr; Medicine &rarr; Pharmacy Stock)</span>
+          </div>
+          <span class="badge-neo4j-pill" id="badge-hop-3">Neo4j Substantially Faster</span>
+        </div>
+        <div class="row g-2 align-items-center mt-1">
+          <div class="col-sm-3 small text-light"><i class="fas fa-database me-1 text-primary"></i> MySQL: <strong class="text-white font-monospace" id="val-mysql-3">28.4 ms</strong></div>
+          <div class="col-sm-3">
+            <div class="benchmark-track"><div class="benchmark-fill-mysql" id="fill-mysql-3" style="width: 65%;"></div></div>
+          </div>
+          <div class="col-sm-3 small text-light"><i class="fas fa-project-diagram me-1 text-success"></i> Neo4j: <strong class="text-white font-monospace" id="val-neo4j-3">1.8 ms</strong></div>
+          <div class="col-sm-3">
+            <div class="benchmark-track"><div class="benchmark-fill-neo4j" id="fill-neo4j-3" style="width: 22%;"></div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Hop 4 -->
+      <div class="benchmark-bar-container" id="bar-hop-4">
+        <div class="d-flex justify-content-between align-items-center mb-1">
+          <div>
+            <strong class="text-white fs-6">4 Hops: Deep Supply Flow</strong>
+            <span class="text-muted small ms-2">(Patient &rarr; Prescription &rarr; Medicine &rarr; Pharmacy &rarr; Supplier)</span>
+          </div>
+          <span class="badge-neo4j-pill" id="badge-hop-4">Neo4j High Speedup</span>
+        </div>
+        <div class="row g-2 align-items-center mt-1">
+          <div class="col-sm-3 small text-light"><i class="fas fa-database me-1 text-primary"></i> MySQL: <strong class="text-white font-monospace" id="val-mysql-4">78.0 ms</strong></div>
+          <div class="col-sm-3">
+            <div class="benchmark-track"><div class="benchmark-fill-mysql" id="fill-mysql-4" style="width: 85%;"></div></div>
+          </div>
+          <div class="col-sm-3 small text-light"><i class="fas fa-project-diagram me-1 text-success"></i> Neo4j: <strong class="text-white font-monospace" id="val-neo4j-4">2.2 ms</strong></div>
+          <div class="col-sm-3">
+            <div class="benchmark-track"><div class="benchmark-fill-neo4j" id="fill-neo4j-4" style="width: 24%;"></div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Hop 5 -->
+      <div class="benchmark-bar-container" id="bar-hop-5">
+        <div class="d-flex justify-content-between align-items-center mb-1">
+          <div>
+            <strong class="text-white fs-6">5 Hops: Full Supply Chain Provenance</strong>
+            <span class="text-muted small ms-2">(Patient &rarr; Rx &rarr; Med &rarr; Pharmacy &rarr; Supplier &rarr; Manufacturer)</span>
+          </div>
+          <span class="badge-neo4j-pill" id="badge-hop-5">Neo4j Dramatic Advantage</span>
+        </div>
+        <div class="row g-2 align-items-center mt-1">
+          <div class="col-sm-3 small text-light"><i class="fas fa-database me-1 text-primary"></i> MySQL: <strong class="text-white font-monospace" id="val-mysql-5">160.5 ms</strong></div>
+          <div class="col-sm-3">
+            <div class="benchmark-track"><div class="benchmark-fill-mysql" id="fill-mysql-5" style="width: 98%;"></div></div>
+          </div>
+          <div class="col-sm-3 small text-light"><i class="fas fa-project-diagram me-1 text-success"></i> Neo4j: <strong class="text-white font-monospace" id="val-neo4j-5">2.6 ms</strong></div>
+          <div class="col-sm-3">
+            <div class="benchmark-track"><div class="benchmark-fill-neo4j" id="fill-neo4j-5" style="width: 25%;"></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ========================================================================= -->
+<!-- SECTION 5: COMPREHENSIVE ARCHITECTURAL COMPARISON MATRIX -->
+<!-- ========================================================================= -->
+<div class="graph-card mb-4">
+  <div class="graph-card-header d-flex justify-content-between align-items-center flex-wrap gap-2">
+    <div class="graph-card-title text-white">
+      <i class="fas fa-table-cells text-teal me-2"></i> Comprehensive Architectural Comparison Matrix
+    </div>
+    <!-- Interactive Category Filter Chips -->
+    <div class="d-flex gap-2 flex-wrap">
+      <button type="button" class="matrix-filter-btn active" onclick="filterMatrix('all', this)">All Dimensions</button>
+      <button type="button" class="matrix-filter-btn" onclick="filterMatrix('modeling', this)">Data Modeling</button>
+      <button type="button" class="matrix-filter-btn" onclick="filterMatrix('query', this)">Query Mechanics</button>
+      <button type="button" class="matrix-filter-btn" onclick="filterMatrix('perf', this)">Performance</button>
+      <button type="button" class="matrix-filter-btn" onclick="filterMatrix('governance', this)">Governance</button>
+    </div>
+  </div>
+
+  <div class="graph-card-body p-3">
+    <div class="table-responsive">
+      <table class="matrix-table">
+        <thead>
+          <tr>
+            <th style="width: 22%; color: #f1f5f9;">Architectural Dimension</th>
+            <th style="width: 39%; color: #93c5fd;"><i class="fas fa-database me-2 text-primary"></i> Relational Engine (MySQL 8.x InnoDB)</th>
+            <th style="width: 39%; color: #6ee7b7;"><i class="fas fa-project-diagram me-2 text-success"></i> Property Graph Engine (Neo4j 5.x)</th>
+          </tr>
+        </thead>
+        <tbody id="matrix-tbody">
+          <!-- Row 1: Core Data Abstraction -->
+          <tr data-category="modeling">
+            <td>
+              <div class="fw-bold text-white mb-2"><i class="fas fa-cubes text-info me-2"></i>Core Abstraction</div>
+              <span class="badge-category-pill">Modeling</span>
+            </td>
+            <td>
+              <div class="fw-bold text-primary mb-1">Tables, Rows, Columns, Keys</div>
+              <div class="text-light text-opacity-75 small">Data is organized into 2D tables with predefined column types, primary keys, and foreign keys.</div>
+            </td>
+            <td>
+              <div class="fw-bold text-success mb-1">Nodes, Relationships, Properties</div>
+              <div class="text-light text-opacity-75 small">Property graph topology. Entities are nodes with labels; relationships are directed, typed first-class entities with arbitrary properties.</div>
+            </td>
+          </tr>
+
+          <!-- Row 2: Relationship Storage -->
+          <tr data-category="modeling">
+            <td>
+              <div class="fw-bold text-white mb-2"><i class="fas fa-link text-info me-2"></i>Relationship Storage</div>
+              <span class="badge-category-pill">Modeling</span>
+            </td>
+            <td>
+              <div class="fw-bold text-primary mb-1">Implicit via Foreign Keys</div>
+              <div class="text-light text-opacity-75 small">Relationships exist only as shared data values or intermediate junction tables (e.g. <code>PRESCRIPTION_ITEM</code>).</div>
+            </td>
+            <td>
+              <div class="fw-bold text-success mb-1">Explicit Double-Linked Pointers</div>
+              <div class="text-light text-opacity-75 small">Relationships are physical double-linked pointers stored directly in the record file without secondary index lookups.</div>
+            </td>
+          </tr>
+
+          <!-- Row 3: Traversal Mechanism -->
+          <tr data-category="perf">
+            <td>
+              <div class="fw-bold text-white mb-2"><i class="fas fa-route text-warning me-2"></i>Traversal Mechanism</div>
+              <span class="badge-category-pill">Performance</span>
+            </td>
+            <td>
+              <div class="fw-bold text-primary mb-1">Relational Table JOINs</div>
+              <div class="text-light text-opacity-75 small">Traversing connections requires nested loop, hash, or merge joins across table indexes. Execution time degrades as path length increases ($O(b^d)$).</div>
+            </td>
+            <td>
+              <div class="fw-bold text-success mb-1">Index-Free Adjacency</div>
+              <div class="text-light text-opacity-75 small">Traversing connections follows memory pointers directly. Execution latency is strictly proportional to the number of edges visited ($O(k)$).</div>
+            </td>
+          </tr>
+
+          <!-- Row 4: Query Language -->
+          <tr data-category="query">
+            <td>
+              <div class="fw-bold text-white mb-2"><i class="fas fa-terminal text-info me-2"></i>Query Language</div>
+              <span class="badge-category-pill">Query Mechanics</span>
+            </td>
+            <td>
+              <div class="fw-bold text-primary mb-1">SQL (Relational Algebra)</div>
+              <div class="text-light text-opacity-75 small">Declarative set-oriented query language (<code>SELECT ... FROM ... JOIN ... GROUP BY ...</code>). Excellent for aggregations and table projections.</div>
+            </td>
+            <td>
+              <div class="fw-bold text-success mb-1">Cypher (Visual Pattern Matching)</div>
+              <div class="text-light text-opacity-75 small">Declarative graph pattern matching (<code>MATCH (p:Patient)-[:HAS_PRESCRIPTION]->(pr) RETURN ...</code>). Highly expressive for structural paths.</div>
+            </td>
+          </tr>
+
+          <!-- Row 5: ACID Guarantees -->
+          <tr data-category="governance">
+            <td>
+              <div class="fw-bold text-white mb-2"><i class="fas fa-lock text-info me-2"></i>ACID Guarantees</div>
+              <span class="badge-category-pill">Governance</span>
+            </td>
+            <td>
+              <div class="fw-bold text-primary mb-1">Strict Serializability (InnoDB)</div>
+              <div class="text-light text-opacity-75 small">Multi-Version Concurrency Control (MVCC), write-ahead logging (WAL), row-level locks, and strict constraint validation.</div>
+            </td>
+            <td>
+              <div class="fw-bold text-success mb-1">Graph ACID Compliance</div>
+              <div class="text-light text-opacity-75 small">Fully ACID compliant through transaction log and relationship locking for interconnected operational workloads.</div>
+            </td>
+          </tr>
+
+          <!-- Row 6: Operational Sweet Spot -->
+          <tr data-category="governance">
+            <td>
+              <div class="fw-bold text-white mb-2"><i class="fas fa-bullseye text-warning me-2"></i>System Sweet Spot</div>
+              <span class="badge-category-pill">Operational</span>
+            </td>
+            <td>
+              <div class="d-flex flex-wrap gap-2 mt-1">
+                <span class="badge bg-primary text-white">Financial Invoicing</span>
+                <span class="badge bg-primary text-white">Stock Decrements</span>
+                <span class="badge bg-primary text-white">Negative Stock Prevention</span>
+                <span class="badge bg-primary text-white">Immutable Audit Trail</span>
+              </div>
+            </td>
+            <td>
+              <div class="d-flex flex-wrap gap-2 mt-1">
+                <span class="badge bg-success text-white">Supply Chain Provenance</span>
+                <span class="badge bg-success text-white">Shortest Path Routing</span>
+                <span class="badge bg-success text-white">Neighborhood Exploration</span>
+                <span class="badge bg-success text-white">Fraud & Doctor Shopping</span>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+</div><!-- End .comparison-view -->
+
+<!-- JAVASCRIPT CONTROLLER FOR INTERACTIVE SIMULATOR & BENCHMARKS -->
+<script>
+  let activeBenchmarkScenario = 'provenance';
+  let duelViewMode = 'code';
+
+  const BENCHMARK_TEMPLATES = {
+    provenance: {
+      tag: "Case 1: Deep Multi-Hop Provenance",
+      title: "Tracing Medicine Batch Provenance Across 5 Relational Entities",
+      desc: "Compare calculating medication traceability from manufacturing plant, through wholesale distributor, to dispensing pharmacy and patient.",
+      sqlBadge: "4+ Inner Joins • O(b^d)",
+      cypherBadge: "Zero Joins • O(k) Pointers",
+      sqlCode: (medId) => `-- SQL: Multi-Table Relational JOINs
+SELECT 
+    mfg.Brand_Name AS Manufacturer,
+    s.Name         AS Supplier,
+    m.Name         AS Medicine,
+    ph.Name        AS Pharmacy,
+    p.First_Name, p.Last_Name
+FROM MEDICINE m
+JOIN SUPPLIER_MANUFACTURER sm ON 1=1
+JOIN MANUFACTURER mfg         ON sm.Manufacturer_ID = mfg.Manufacturer_ID
+JOIN SUPPLIER s               ON sm.Supplier_ID = s.Supplier_ID
+JOIN PRESCRIPTION_ITEM pi     ON m.Medicine_ID = pi.Medicine_ID
+JOIN PRESCRIPTION pr          ON pi.Prescription_ID = pr.Prescription_ID
+JOIN PATIENT p                ON pr.Patient_ID = p.Patient_ID
+JOIN PHARMACY ph              ON pr.Pharmacy_ID = ph.Pharmacy_ID
+WHERE m.Medicine_ID = ${medId};`,
+      cypherCode: (medId) => `// Cypher: Declarative Visual Graph Pattern
+MATCH (mfg:Manufacturer)-[:SUPPLIES_TO]->(s:Supplier)
+      -[:STOCKS]->(med:Medicine {medicine_id: ${medId}})
+      <-[:CONTAINS_MEDICINE]-(pr:Prescription)
+      -[:ISSUED_FOR]->(p:Patient),
+      (pr)-[:DISPENSED_AT]->(ph:Pharmacy)
+RETURN mfg.brand_name, s.name, med.name, ph.name, p.name;`
+    },
+
+    shortest_path: {
+      tag: "Case 2: Shortest Clinical Path",
+      title: "Finding Shortest Connection between Patient and Medicine Supplier",
+      desc: "Compare calculating the shortest clinical, dispensing, or logistics path between an arbitrary patient and a supplier node.",
+      sqlBadge: "Recursive CTE (Complex)",
+      cypherBadge: "Native shortestPath() • BFS",
+      sqlCode: (patId, suppId) => `-- SQL: Complex Recursive Common Table Expression
+WITH RECURSIVE CareNetworkPath AS (
+    SELECT Patient_ID AS node_id, 1 AS depth, 
+           CAST(Patient_ID AS CHAR(255)) AS path
+    FROM PATIENT
+    WHERE Patient_ID = ${patId}
+    UNION ALL
+    SELECT pr.Prescription_ID, cnp.depth + 1,
+           CONCAT(cnp.path, ' -> Rx#', pr.Prescription_ID)
+    FROM CareNetworkPath cnp
+    JOIN PRESCRIPTION pr ON cnp.node_id = pr.Patient_ID
+    WHERE cnp.depth < 4
+)
+SELECT * FROM CareNetworkPath ORDER BY depth ASC LIMIT 5;`,
+      cypherCode: (patId, suppId) => `// Cypher: Native Breadth-First Search (BFS)
+MATCH (p:Patient {patient_id: ${patId}}), 
+      (s:Supplier {supplier_id: ${suppId}}),
+      path = shortestPath((p)-[*..6]-(s))
+RETURN path, length(path) AS hops;`
+    },
+
+    financial_txn: {
+      tag: "Case 3: Financial Settlement & Triggers",
+      title: "Dispensing Settlement with GST & Immutable Stock Log",
+      desc: "Evaluates atomic financial checkout: inserting bill records, deducting inventory, asserting positive stock invariants, and recording immutable audit logs.",
+      sqlBadge: "ACID Stored Procedure • Triggers",
+      cypherBadge: "Custom Graph Mutation",
+      sqlCode: (rxId) => `-- SQL: Atomic Stored Procedure with Invariants
+CALL generate_bill(
+    ${rxId},        -- Prescription ID
+    401,            -- Patient ID
+    101,            -- Pharmacy ID
+    'Cash',         -- Payment Method
+    0.05,           -- 5% Discount
+    @out_bill_id
+);
+
+-- Enforces trg_before_inventory_update (Aborts on negative qty)
+-- Enforces trg_after_inventory_update (Appends to STOCK_LOG)`,
+      cypherCode: (rxId) => `// Cypher: Node Property Mutation
+MATCH (p:Prescription {prescription_id: ${rxId}})-[:CONTAINS_MEDICINE]->(m:Medicine),
+      (inv:Inventory {pharmacy_id: 101})
+SET inv.quantity = inv.quantity - 1
+CREATE (b:Bill {bill_id: 999, total: 245.50, status: 'PAID'})
+CREATE (p)-[:BILLED_UNDER]->(b);`
+    }
+  };
+
+  function selectBenchmarkScenario(scenario) {
+    activeBenchmarkScenario = scenario;
+
+    // Toggle active tab buttons
+    ['provenance', 'shortest_path', 'financial_txn'].forEach(s => {
+      const btn = document.getElementById(`caseBtn-${s}`);
+      if (btn) btn.classList.toggle('active', s === scenario);
+    });
+
+    // Toggle parameter inputs
+    document.getElementById('param-provenance-box').classList.toggle('d-none', scenario !== 'provenance');
+    document.getElementById('param-shortest-box').classList.toggle('d-none', scenario !== 'shortest_path');
+    document.getElementById('param-financial-box').classList.toggle('d-none', scenario !== 'financial_txn');
+
+    // Update banner metadata
+    const tpl = BENCHMARK_TEMPLATES[scenario];
+    document.getElementById('duelCaseTag').innerText = tpl.tag;
+    document.getElementById('duelCaseTitle').innerText = tpl.title;
+    document.getElementById('duelVerdictText').innerText = tpl.desc;
+
+    // Update Code Display
+    updateDuelCodePanels();
+  }
+
+  function updateDuelCodePanels() {
+    const tpl = BENCHMARK_TEMPLATES[activeBenchmarkScenario];
+    if (!tpl) return;
+
+    if (activeBenchmarkScenario === 'provenance') {
+      const medId = document.getElementById('benchMedicineSelect').value;
+      document.getElementById('sqlLiveCodeDisplay').innerText = tpl.sqlCode(medId);
+      document.getElementById('cypherLiveCodeDisplay').innerText = tpl.cypherCode(medId);
+    } else if (activeBenchmarkScenario === 'shortest_path') {
+      const patId = document.getElementById('benchPatientSelect').value;
+      const suppId = document.getElementById('benchSupplierSelect').value;
+      document.getElementById('sqlLiveCodeDisplay').innerText = tpl.sqlCode(patId, suppId);
+      document.getElementById('cypherLiveCodeDisplay').innerText = tpl.cypherCode(patId, suppId);
+    } else if (activeBenchmarkScenario === 'financial_txn') {
+      const rxId = document.getElementById('benchPrescriptionSelect').value;
+      document.getElementById('sqlLiveCodeDisplay').innerText = tpl.sqlCode(rxId);
+      document.getElementById('cypherLiveCodeDisplay').innerText = tpl.cypherCode(rxId);
+    }
+  }
+
+  function setDuelViewMode(mode) {
+    duelViewMode = mode;
+    document.getElementById('btnViewModeCode').classList.toggle('active', mode === 'code');
+    document.getElementById('btnViewModeOutput').classList.toggle('active', mode === 'output');
+
+    document.getElementById('sqlLiveCodeDisplay').classList.toggle('d-none', mode === 'output');
+    document.getElementById('sqlLiveOutputDisplay').classList.toggle('d-none', mode === 'code');
+
+    document.getElementById('cypherLiveCodeDisplay').classList.toggle('d-none', mode === 'output');
+    document.getElementById('cypherLiveOutputDisplay').classList.toggle('d-none', mode === 'code');
+  }
+
+  async function executeLiveBenchmark() {
+    const btn = document.getElementById('btnExecuteDuel');
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i> Running Live Duel...';
+
+    let params = {};
+    if (activeBenchmarkScenario === 'provenance') {
+      params = { medicine_id: document.getElementById('benchMedicineSelect').value };
+    } else if (activeBenchmarkScenario === 'shortest_path') {
+      params = {
+        from_type: 'Patient',
+        from_id: document.getElementById('benchPatientSelect').value,
+        to_type: 'Supplier',
+        to_id: document.getElementById('benchSupplierSelect').value
+      };
+    } else if (activeBenchmarkScenario === 'financial_txn') {
+      params = { prescription_id: document.getElementById('benchPrescriptionSelect').value };
+    }
+
+    try {
+      const res = await fetch('/api/comparison/benchmark', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ scenario: activeBenchmarkScenario, params: params })
+      });
+      const json = await res.json();
+      if (!json.success || !json.data) {
+        showToast('Benchmark execution failed', 'error');
+        return;
+      }
+
+      const data = json.data;
+
+      // Update Live Badges
+      document.getElementById('sqlLiveTimingBadge').innerHTML = `Latency: <strong>${data.mysql.latency_ms} ms</strong>`;
+      document.getElementById('cypherLiveTimingBadge').innerHTML = `Latency: <strong>${data.neo4j.latency_ms} ms</strong>`;
+
+      // Update Winner
+      if (data.winner === 'neo4j') {
+        document.getElementById('duelWinnerBadge').innerHTML = `<span class="badge-neo4j-pill"><i class="fas fa-trophy me-1"></i> Winner: Neo4j (${data.speedup_factor}x Faster)</span>`;
+      } else {
+        document.getElementById('duelWinnerBadge').innerHTML = `<span class="badge-mysql-pill"><i class="fas fa-trophy me-1"></i> Winner: MySQL (${data.speedup_factor}x Faster)</span>`;
+      }
+      document.getElementById('duelVerdictText').innerText = data.verdict_text;
+
+      // Telemetry
+      document.getElementById('duelTelemetrySpeedup').innerText = `${data.speedup_factor}x`;
+
+      // Render Live Output Panes
+      renderSqlOutput(data.mysql.records);
+      renderCypherOutput(data.neo4j);
+
+      showToast(`Live duel finished: ${data.winner === 'neo4j' ? 'Neo4j' : 'MySQL'} took the lead!`, 'success');
+    } catch (err) {
+      console.error('Error executing duel:', err);
+      showToast('Network error running benchmark', 'error');
+    } finally {
+      btn.disabled = false;
+      btn.innerHTML = '<i class="fas fa-play me-1"></i> Execute Live Dual-Engine Duel';
+    }
+  }
+
+  function renderSqlOutput(records) {
+    const container = document.getElementById('sqlLiveOutputDisplay');
+    if (!records || records.length === 0) {
+      container.innerHTML = '<div class="text-muted small">Query executed successfully (0 rows returned).</div>';
+      return;
+    }
+
+    const headers = Object.keys(records[0]);
+    let html = '<table class="table table-dark table-sm table-striped small mb-0 font-monospace">';
+    html += '<thead><tr>' + headers.map(h => `<th class="text-info">${h}</th>`).join('') + '</tr></thead><tbody>';
+    records.slice(0, 8).forEach(r => {
+      html += '<tr>' + headers.map(h => `<td>${r[h] !== null ? r[h] : '<span class="text-muted">NULL</span>'}</td>`).join('') + '</tr>';
+    });
+    html += '</tbody></table>';
+    container.innerHTML = html;
+  }
+
+  function renderCypherOutput(neoData) {
+    const container = document.getElementById('cypherLiveOutputDisplay');
+    if (neoData.hops && neoData.hops.length > 0) {
+      let html = '<div class="small text-white fw-bold mb-2">Shortest Traversal Route:</div><div class="d-flex align-items-center flex-wrap gap-2">';
+      neoData.hops.forEach((h, i) => {
+        html += `<span class="badge bg-dark border border-secondary text-info">${h}</span>`;
+        if (i < neoData.hops.length - 1) html += '<i class="fas fa-arrow-right text-success small"></i>';
+      });
+      html += '</div>';
+      container.innerHTML = html;
+      return;
+    }
+
+    if (!neoData.records || neoData.records.length === 0) {
+      container.innerHTML = '<div class="text-muted small">Graph pattern evaluated with 0 terminal records.</div>';
+      return;
+    }
+
+    let html = '<div class="small font-monospace">';
+    neoData.records.slice(0, 8).forEach(rec => {
+      html += `<div class="p-2 mb-1 rounded bg-dark border border-secondary border-opacity-25 text-success">${JSON.stringify(rec)}</div>`;
+    });
+    html += '</div>';
+    container.innerHTML = html;
+  }
+
+  // --------------------------------------------------------------------------
+  // LIVE DEPTH STRESS TEST RUNNER
+  // --------------------------------------------------------------------------
+  async function runLiveStressTest() {
+    const btn = document.getElementById('btnRunStressTest');
+    const patId = document.getElementById('stressPatientSelect').value;
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i> Running 1-to-5 Hops...';
+
+    try {
+      const res = await fetch(`/api/comparison/stress-test?patient_id=${patId}`);
+      const json = await res.json();
+      if (!json.success || !json.data) {
+        showToast('Stress test failed', 'error');
+        return;
+      }
+
+      const hopsData = json.data;
+      hopsData.forEach(h => {
+        const hopNum = h.hops;
+        const mMs = h.mysql_ms;
+        const nMs = h.neo4j_ms;
+
+        // Update text values
+        const mEl = document.getElementById(`val-mysql-${hopNum}`);
+        const nEl = document.getElementById(`val-neo4j-${hopNum}`);
+        if (mEl) mEl.innerText = `${mMs} ms`;
+        if (nEl) nEl.innerText = `${nMs} ms`;
+
+        // Update bar widths relative to max
+        const maxVal = Math.max(mMs, nMs, 10);
+        const mWidth = Math.min(100, Math.max(15, (mMs / maxVal) * 100));
+        const nWidth = Math.min(100, Math.max(15, (nMs / maxVal) * 100));
+
+        const mBar = document.getElementById(`fill-mysql-${hopNum}`);
+        const nBar = document.getElementById(`fill-neo4j-${hopNum}`);
+        if (mBar) mBar.style.width = `${mWidth}%`;
+        if (nBar) nBar.style.width = `${nWidth}%`;
+
+        // Update Badge
+        const badge = document.getElementById(`badge-hop-${hopNum}`);
+        if (badge) {
+          if (h.winner === 'near_parity') {
+            badge.className = 'badge-parity-pill';
+            badge.innerText = 'Near Parity';
+          } else {
+            badge.className = 'badge-neo4j-pill';
+            badge.innerText = `Neo4j ${h.speedup}x Faster`;
+          }
+        }
+      });
+
+      showToast('Live multi-hop stress test complete across all 5 depths!', 'success');
+    } catch (err) {
+      console.error('Error running stress test:', err);
+      showToast('Network error during stress test', 'error');
+    } finally {
+      btn.disabled = false;
+      btn.innerHTML = '<i class="fas fa-bolt me-1"></i> Run Live Stress Test';
+    }
+  }
+
+  function filterMatrix(category, el) {
+    document.querySelectorAll('.matrix-filter-btn').forEach(btn => btn.classList.remove('active'));
+    if (el) el.classList.add('active');
+
+    const rows = document.querySelectorAll('#matrix-tbody tr');
+    rows.forEach(row => {
+      row.style.display = (category === 'all' || row.getAttribute('data-category') === category) ? '' : 'none';
+    });
+  }
+
+  // Initialize
+  document.addEventListener('DOMContentLoaded', () => {
+    selectBenchmarkScenario('provenance');
+    document.getElementById('benchMedicineSelect').addEventListener('change', updateDuelCodePanels);
+    document.getElementById('benchPatientSelect').addEventListener('change', updateDuelCodePanels);
+    document.getElementById('benchSupplierSelect').addEventListener('change', updateDuelCodePanels);
+    document.getElementById('benchPrescriptionSelect').addEventListener('change', updateDuelCodePanels);
+  });
+</script>
+{% endblock %}

@@ -1,8 +1,23 @@
 # Prescription Tracking System
 
-A full-stack clinical prescription and pharmacy management system built with **Oracle Database 21c XE**, **FastAPI**, and **React 19 with Vite**.
+A comprehensive multi-tier clinical prescription and pharmacy management platform containing both **DA2 (Relational Core)** and **DA3 (Advanced Graph Intelligence Extension)**:
 
-The system connects doctors, patients, pharmacies, and pharmaceutical suppliers into a single platform. It manages patient records, issues multi-item prescriptions with custom dosages, monitors medicine inventory and expirations, generates pharmacy bills, and tracks supplier restock orders.
+1. **DA2 (Relational Core)**: Full-stack prescription and billing system built with **FastAPI**, **React 19 with Vite**, and **Relational SQL Database**.
+2. **DA3 (Graph Intelligence)**: Enterprise graph network system located in [**`📁 pharmacy_neo4j_graph/`**](./pharmacy_neo4j_graph) powered by **Neo4j 5.x Cloud AuraDB**, **Python Flask**, and **Interactive Vis.js Canvas**.
+
+---
+
+## 🌐 DA3: Advanced Neo4j Graph Intelligence Extension
+
+Located in [**`📁 pharmacy_neo4j_graph/`**](./pharmacy_neo4j_graph), DA3 extends the prescription tracking system with property graph capabilities:
+
+- **Neo4j 5.x Cloud AuraDB**: Fully seeded cloud graph database with 87 clinical entities and 153 directed relationships.
+- **Interactive Graph Dashboard**: Real-time force-directed canvas visualizing doctors, patients, pharmacies, medicines, and supply chain networks.
+- **Radial Graph Explorer**: 1-hop and 2-hop focal entity exploration with anti-collision physics.
+- **Supply Chain Path Finder**: Shortest path graph routing (Dijkstra / BFS) from patient to pharmaceutical manufacturer.
+- **Interactive Cypher Console**: Live terminal supporting 13 academic Cypher presets (degree centrality, multi-hop traversals, diamond recommendations, and `SET` property updates).
+
+👉 *For complete DA3 setup, Cypher schemas, and instructions, see [**`pharmacy_neo4j_graph/README.md`**](./pharmacy_neo4j_graph/README.md).*
 
 ---
 
@@ -62,30 +77,25 @@ The database is built on Oracle Database 21c XE and consists of:
 
 ```text
 Dbms-prescription-tracking-sys/
-├── backend/
-│   ├── app/
-│   │   ├── api/             # API routes (patients, medicines, prescriptions, etc.)
-│   │   ├── schemas/         # Pydantic validation schemas
-│   │   ├── services/        # Database queries and transaction logic
-│   │   ├── config.py        # Settings and environment variables
-│   │   ├── database.py      # Oracle connection handling and health check
-│   │   └── main.py          # FastAPI app entry point
-│   ├── requirements.txt     # Python packages
-│   └── .env.example         # Example environment configuration
-├── database/
-│   ├── 01_tables.sql        # Table definitions and constraints
-│   ├── 02_data.sql          # Sample seed data
-│   ├── 03_procedures.sql    # PL/SQL stored procedures
-│   ├── 04_triggers.sql      # PL/SQL validation triggers
-│   └── 05_functions.sql     # PL/SQL stored functions
-└── frontend/
-    ├── src/
-    │   ├── api/client.js    # API fetch client
-    │   ├── components/      # Dashboard, Navbar, Modal
-    │   ├── pages/           # Pages for each clinical module
-    │   └── App.jsx          # Main page layout and navigation
-    ├── package.json         # Frontend packages and scripts
-    └── vite.config.js       # Vite configuration and API proxy
+├── backend/                       # [DA2] FastAPI Python backend
+├── database/                      # [DA2] Relational SQL scripts, triggers & procedures
+├── frontend/                      # [DA2] React 19 + Vite dashboard
+└── pharmacy_neo4j_graph/          # [DA3] Advanced Neo4j Graph Intelligence Extension
+    ├── backend/                   # Flask Graph API & Neo4j driver
+    │   ├── app.py
+    │   ├── config.py
+    │   ├── requirements.txt
+    │   └── services/neo4j_service.py
+    ├── database/                  # OpenCypher constraints, schemas, & seed loaders
+    │   ├── 01_constraints.cypher
+    │   ├── 02_schema.cypher
+    │   ├── 03_sample_data.cypher
+    │   ├── 04_queries.cypher
+    │   ├── 05_test_cases.cypher
+    │   └── load_data.py
+    ├── frontend/                  # Interactive Graph canvas, explorer, & pathfinder
+    ├── .env.example               # Example Neo4j cloud configuration
+    └── README.md                  # Comprehensive DA3 documentation
 ```
 
 ---

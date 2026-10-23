@@ -1,0 +1,847 @@
+{% extends "base.html" %}
+
+{% block title %}Graph Intelligence & Network Analytics{% endblock %}
+{% block breadcrumb %}Graph Intelligence (Neo4j){% endblock %}
+
+{% block head_extra %}
+<style>
+  .graph-tabs-container {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 6px;
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+  }
+  .graph-tab-nav-btn {
+    flex: 1;
+    min-width: 200px;
+    background: transparent;
+    color: #64748b;
+    border: 1px solid transparent;
+    border-radius: 8px;
+    padding: 10px 16px;
+    font-weight: 600;
+    font-size: 13px;
+    transition: all 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    cursor: pointer;
+    white-space: nowrap;
+  }
+  .graph-tab-nav-btn:hover {
+    background: #f8fafc;
+    color: #0f172a;
+  }
+  .graph-tab-nav-btn.active {
+    background: #0f3460;
+    color: #ffffff !important;
+    border-color: #0f3460;
+    box-shadow: 0 2px 8px rgba(15, 52, 96, 0.25);
+  }
+  .graph-tab-nav-btn.active i {
+    color: #ffffff !important;
+  }
+  .canvas-action-btn {
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    color: #f1f5f9;
+    font-size: 12px;
+    font-weight: 500;
+    padding: 6px 12px;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    cursor: pointer;
+  }
+  .canvas-action-btn:hover {
+    background: rgba(255, 255, 255, 0.18);
+    color: #ffffff;
+    border-color: rgba(56, 189, 248, 0.4);
+  }
+  .canvas-action-btn.active {
+    background: rgba(13, 148, 136, 0.3);
+    color: #2dd4bf;
+    border-color: #0d9488;
+  }
+  .canvas-action-btn-teal {
+    background: #0d9488;
+    color: #ffffff;
+    border: 1px solid #14b8a6;
+    font-size: 12px;
+    font-weight: 600;
+    padding: 6px 14px;
+    border-radius: 8px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition: all 0.2s ease;
+    cursor: pointer;
+  }
+  .canvas-action-btn-teal:hover {
+    background: #0f766e;
+    color: #ffffff;
+  }
+  .sim-kpi-card {
+    background: #1e293b;
+    border: 1.5px solid rgba(148, 163, 184, 0.25);
+    border-radius: 12px;
+    padding: 16px 20px;
+    transition: transform 0.2s ease;
+  }
+  .sim-kpi-card:hover {
+    transform: translateY(-2px);
+  }
+  #disruption-canvas {
+    height: 480px;
+    background: #0b1120;
+    border: 1.5px solid rgba(56, 189, 248, 0.25);
+    border-radius: 12px;
+    position: relative;
+  }
+
+  /* =========================================================================
+     MAXIMIZED / FULLSCREEN PRESENTATION STUDIO MODE
+     ========================================================================= */
+  body.graph-canvas-maximized {
+    overflow: hidden !important;
+  }
+
+  #tabPane-canvas.maximized-mode,
+  #tabPane-canvas:fullscreen,
+  #tabPane-canvas:-webkit-full-screen {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    width: 100vw !important;
+    height: 100vh !important;
+    max-width: 100vw !important;
+    max-height: 100vh !important;
+    z-index: 99999999 !important;
+    margin: 0 !important;
+    border-radius: 0 !important;
+    border: none !important;
+    box-shadow: none !important;
+    background: #060a13 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    overflow: hidden !important;
+    padding: 0 !important;
+  }
+
+  #tabPane-canvas.maximized-mode .graph-card-header,
+  #tabPane-canvas:fullscreen .graph-card-header,
+  #tabPane-canvas:-webkit-full-screen .graph-card-header {
+    padding: 14px 24px !important;
+    background: #080f1e !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.12) !important;
+    flex-shrink: 0 !important;
+  }
+
+  #tabPane-canvas.maximized-mode .graph-card-body,
+  #tabPane-canvas:fullscreen .graph-card-body,
+  #tabPane-canvas:-webkit-full-screen .graph-card-body {
+    flex: 1 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    padding: 16px 24px !important;
+    overflow: hidden !important;
+    height: calc(100vh - 65px) !important;
+  }
+
+  #tabPane-canvas.maximized-mode .graph-toolbar,
+  #tabPane-canvas:fullscreen .graph-toolbar,
+  #tabPane-canvas:-webkit-full-screen .graph-toolbar {
+    flex-shrink: 0 !important;
+    margin-bottom: 12px !important;
+  }
+
+  #tabPane-canvas.maximized-mode .row.g-3,
+  #tabPane-canvas:fullscreen .row.g-3,
+  #tabPane-canvas:-webkit-full-screen .row.g-3 {
+    flex: 1 !important;
+    height: calc(100% - 50px) !important;
+    margin-top: 0 !important;
+  }
+
+  #tabPane-canvas.maximized-mode .row.g-3 > .col-lg-9,
+  #tabPane-canvas:fullscreen .row.g-3 > .col-lg-9,
+  #tabPane-canvas:-webkit-full-screen .row.g-3 > .col-lg-9 {
+    display: flex !important;
+    flex-direction: column !important;
+    height: 100% !important;
+  }
+
+  #tabPane-canvas.maximized-mode .vis-network-canvas,
+  #tabPane-canvas:fullscreen .vis-network-canvas,
+  #tabPane-canvas:-webkit-full-screen .vis-network-canvas {
+    flex: 1 !important;
+    height: calc(100vh - 200px) !important;
+    min-height: 480px !important;
+  }
+
+  #tabPane-canvas.maximized-mode .row.g-3 > .col-lg-3,
+  #tabPane-canvas:fullscreen .row.g-3 > .col-lg-3,
+  #tabPane-canvas:-webkit-full-screen .row.g-3 > .col-lg-3 {
+    height: 100% !important;
+  }
+
+  #tabPane-canvas.maximized-mode .node-inspector,
+  #tabPane-canvas:fullscreen .node-inspector,
+  #tabPane-canvas:-webkit-full-screen .node-inspector {
+    height: calc(100vh - 160px) !important;
+    max-height: calc(100vh - 160px) !important;
+    overflow-y: auto !important;
+  }
+
+  #btn-maximize-canvas.active {
+    background: rgba(234, 179, 8, 0.25) !important;
+    color: #fbbf24 !important;
+    border-color: rgba(234, 179, 8, 0.6) !important;
+  }
+
+  /* =========================================================================
+     MODERN HIGH-TECH VIS.JS CANVAS NAVIGATION CONTROLS
+     Replaces crude legacy green/grey controls with sleek glassmorphic icons
+     ========================================================================= */
+  .vis-network div.vis-navigation,
+  #network-canvas .vis-navigation,
+  .vis-network-canvas .vis-navigation {
+    position: absolute !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    pointer-events: none !important;
+    z-index: 20 !important;
+  }
+
+  .vis-network div.vis-navigation div.vis-button,
+  #network-canvas .vis-button,
+  .vis-network-canvas .vis-button {
+    pointer-events: auto !important;
+    width: 36px !important;
+    height: 36px !important;
+    border-radius: 10px !important;
+    background-color: rgba(15, 23, 42, 0.85) !important;
+    border: 1.5px solid rgba(56, 189, 248, 0.35) !important;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.1) !important;
+    backdrop-filter: blur(8px) !important;
+    -webkit-backdrop-filter: blur(8px) !important;
+    background-position: center center !important;
+    background-repeat: no-repeat !important;
+    background-size: 18px 18px !important;
+    cursor: pointer !important;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  }
+
+  .vis-network div.vis-navigation div.vis-button:hover,
+  #network-canvas .vis-button:hover,
+  .vis-network-canvas .vis-button:hover {
+    background-color: rgba(30, 41, 59, 0.95) !important;
+    border-color: #38bdf8 !important;
+    box-shadow: 0 0 16px rgba(56, 189, 248, 0.5), 0 4px 16px rgba(0, 0, 0, 0.6) !important;
+    transform: translateY(-2px) scale(1.06) !important;
+  }
+
+  .vis-network div.vis-navigation div.vis-button:active,
+  #network-canvas .vis-button:active,
+  .vis-network-canvas .vis-button:active {
+    background-color: #0284c7 !important;
+    border-color: #38bdf8 !important;
+    transform: scale(0.96) !important;
+    box-shadow: 0 0 10px rgba(56, 189, 248, 0.8) !important;
+  }
+
+  /* 1. UP ARROW */
+  .vis-network div.vis-navigation div.vis-button.vis-up,
+  #network-canvas .vis-button.vis-up,
+  .vis-network-canvas .vis-button.vis-up {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2338bdf8' stroke-width='2.6' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='18 15 12 9 6 15'/%3E%3C/svg%3E") !important;
+    bottom: 54px !important;
+    left: 54px !important;
+  }
+  .vis-network div.vis-navigation div.vis-button.vis-up:hover,
+  #network-canvas .vis-button.vis-up:hover,
+  .vis-network-canvas .vis-button.vis-up:hover {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23ffffff' stroke-width='2.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='18 15 12 9 6 15'/%3E%3C/svg%3E") !important;
+  }
+
+  /* 2. DOWN ARROW */
+  .vis-network div.vis-navigation div.vis-button.vis-down,
+  #network-canvas .vis-button.vis-down,
+  .vis-network-canvas .vis-button.vis-down {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2338bdf8' stroke-width='2.6' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E") !important;
+    bottom: 12px !important;
+    left: 54px !important;
+  }
+  .vis-network div.vis-navigation div.vis-button.vis-down:hover,
+  #network-canvas .vis-button.vis-down:hover,
+  .vis-network-canvas .vis-button.vis-down:hover {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23ffffff' stroke-width='2.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E") !important;
+  }
+
+  /* 3. LEFT ARROW */
+  .vis-network div.vis-navigation div.vis-button.vis-left,
+  #network-canvas .vis-button.vis-left,
+  .vis-network-canvas .vis-button.vis-left {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2338bdf8' stroke-width='2.6' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='15 18 9 12 15 6'/%3E%3C/svg%3E") !important;
+    bottom: 12px !important;
+    left: 12px !important;
+  }
+  .vis-network div.vis-navigation div.vis-button.vis-left:hover,
+  #network-canvas .vis-button.vis-left:hover,
+  .vis-network-canvas .vis-button.vis-left:hover {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23ffffff' stroke-width='2.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='15 18 9 12 15 6'/%3E%3C/svg%3E") !important;
+  }
+
+  /* 4. RIGHT ARROW */
+  .vis-network div.vis-navigation div.vis-button.vis-right,
+  #network-canvas .vis-button.vis-right,
+  .vis-network-canvas .vis-button.vis-right {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2338bdf8' stroke-width='2.6' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='9 6 15 12 9 18'/%3E%3C/svg%3E") !important;
+    bottom: 12px !important;
+    left: 96px !important;
+  }
+  .vis-network div.vis-navigation div.vis-button.vis-right:hover,
+  #network-canvas .vis-button.vis-right:hover,
+  .vis-network-canvas .vis-button.vis-right:hover {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23ffffff' stroke-width='2.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='9 6 15 12 9 18'/%3E%3C/svg%3E") !important;
+  }
+
+  /* 5. ZOOM IN (+) */
+  .vis-network div.vis-navigation div.vis-button.vis-zoomIn,
+  #network-canvas .vis-button.vis-zoomIn,
+  .vis-network-canvas .vis-button.vis-zoomIn {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2338bdf8' stroke-width='2.6' stroke-linecap='round' stroke-linejoin='round'%3E%3Cline x1='12' y1='5' x2='12' y2='19'/%3E%3Cline x1='5' y1='12' x2='19' y2='12'/%3E%3C/svg%3E") !important;
+    bottom: 12px !important;
+    right: 12px !important;
+  }
+  .vis-network div.vis-navigation div.vis-button.vis-zoomIn:hover,
+  #network-canvas .vis-button.vis-zoomIn:hover,
+  .vis-network-canvas .vis-button.vis-zoomIn:hover {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23ffffff' stroke-width='2.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cline x1='12' y1='5' x2='12' y2='19'/%3E%3Cline x1='5' y1='12' x2='19' y2='12'/%3E%3C/svg%3E") !important;
+  }
+
+  /* 6. ZOOM OUT (-) */
+  .vis-network div.vis-navigation div.vis-button.vis-zoomOut,
+  #network-canvas .vis-button.vis-zoomOut,
+  .vis-network-canvas .vis-button.vis-zoomOut {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2338bdf8' stroke-width='2.6' stroke-linecap='round' stroke-linejoin='round'%3E%3Cline x1='5' y1='12' x2='19' y2='12'/%3E%3C/svg%3E") !important;
+    bottom: 12px !important;
+    right: 54px !important;
+  }
+  .vis-network div.vis-navigation div.vis-button.vis-zoomOut:hover,
+  #network-canvas .vis-button.vis-zoomOut:hover,
+  .vis-network-canvas .vis-button.vis-zoomOut:hover {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23ffffff' stroke-width='2.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cline x1='5' y1='12' x2='19' y2='12'/%3E%3C/svg%3E") !important;
+  }
+
+  /* 7. ZOOM EXTENTS / FIT */
+  .vis-network div.vis-navigation div.vis-button.vis-zoomExtends,
+  .vis-network div.vis-navigation div.vis-button.vis-zoomExtents,
+  #network-canvas .vis-button.vis-zoomExtends,
+  #network-canvas .vis-button.vis-zoomExtents,
+  .vis-network-canvas .vis-button.vis-zoomExtends,
+  .vis-network-canvas .vis-button.vis-zoomExtents {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2338bdf8' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3'/%3E%3C/svg%3E") !important;
+    bottom: 54px !important;
+    right: 12px !important;
+  }
+  .vis-network div.vis-navigation div.vis-button.vis-zoomExtends:hover,
+  .vis-network div.vis-navigation div.vis-button.vis-zoomExtents:hover,
+  #network-canvas .vis-button.vis-zoomExtends:hover,
+  #network-canvas .vis-button.vis-zoomExtents:hover,
+  .vis-network-canvas .vis-button.vis-zoomExtends:hover,
+  .vis-network-canvas .vis-button.vis-zoomExtents:hover {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23ffffff' stroke-width='2.6' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3'/%3E%3C/svg%3E") !important;
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Engine Status Banner & Top Action Controls -->
+<div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
+  <div>
+    <h2 class="fw-bold text-dark mb-1" style="letter-spacing: -0.3px;">
+      <i class="fas fa-project-diagram text-teal me-2"></i>Pharmacy Graph Intelligence (Neo4j)
+    </h2>
+    <p class="text-secondary small mb-0">
+      Multi-hop clinical graph topology, supply chain failure simulations, doctor-shopping fraud rings, and centrality analytics
+    </p>
+  </div>
+
+</div>
+
+<!-- 8 Graph KPI Cards -->
+<div class="stat-cards-grid mb-4">
+  <!-- Card 1: Total Graph Nodes -->
+  <div class="stat-card blue shadow-sm">
+    <div class="stat-content">
+      <div class="stat-label">Total Graph Nodes</div>
+      <div class="stat-value text-dark" id="kpi-total-nodes">{{ stats.total_nodes }}</div>
+      <div class="stat-subtext text-muted">10 Entity Labels</div>
+    </div>
+    <div class="stat-icon-wrapper">
+      <i class="fas fa-circle-nodes"></i>
+    </div>
+  </div>
+
+  <!-- Card 2: Total Relationships -->
+  <div class="stat-card teal shadow-sm">
+    <div class="stat-content">
+      <div class="stat-label">Total Relationships</div>
+      <div class="stat-value text-dark" id="kpi-total-edges">{{ stats.total_relationships }}</div>
+      <div class="stat-subtext text-muted">10 Directed Types</div>
+    </div>
+    <div class="stat-icon-wrapper">
+      <i class="fas fa-diagram-project"></i>
+    </div>
+  </div>
+
+  <!-- Card 3: Formulary Medicines -->
+  <div class="stat-card green shadow-sm">
+    <div class="stat-content">
+      <div class="stat-label">Formulary Medicines</div>
+      <div class="stat-value text-dark">{{ stats.node_counts.Medicine or 12 }}</div>
+      <div class="stat-subtext text-muted">Therapeutic Catalog</div>
+    </div>
+    <div class="stat-icon-wrapper">
+      <i class="fas fa-pills"></i>
+    </div>
+  </div>
+
+  <!-- Card 4: Clinical Patients -->
+  <div class="stat-card indigo shadow-sm">
+    <div class="stat-content">
+      <div class="stat-label">Clinical Patients</div>
+      <div class="stat-value text-dark">{{ stats.node_counts.Patient or 10 }}</div>
+      <div class="stat-subtext text-muted">Prescription Holders</div>
+    </div>
+    <div class="stat-icon-wrapper">
+      <i class="fas fa-user-injured"></i>
+    </div>
+  </div>
+
+  <!-- Card 5: Medical Practitioners -->
+  <div class="stat-card blue shadow-sm">
+    <div class="stat-content">
+      <div class="stat-label">Medical Practitioners</div>
+      <div class="stat-value text-dark">{{ stats.node_counts.Doctor or 8 }}</div>
+      <div class="stat-subtext text-muted">Authorized Prescribers</div>
+    </div>
+    <div class="stat-icon-wrapper">
+      <i class="fas fa-user-md"></i>
+    </div>
+  </div>
+
+  <!-- Card 6: Prescription Networks -->
+  <div class="stat-card amber shadow-sm">
+    <div class="stat-content">
+      <div class="stat-label">Prescription Networks</div>
+      <div class="stat-value text-dark">{{ stats.node_counts.Prescription or 10 }}</div>
+      <div class="stat-subtext text-muted">Clinical Regimens</div>
+    </div>
+    <div class="stat-icon-wrapper">
+      <i class="fas fa-file-prescription"></i>
+    </div>
+  </div>
+
+  <!-- Card 7: Most Connected Drug -->
+  <div class="stat-card rose shadow-sm">
+    <div class="stat-content" style="min-width: 0; flex: 1;">
+      <div class="stat-label">Most Connected Drug</div>
+      <div class="fw-bold text-dark fs-6 text-truncate mb-1" style="max-width: 175px;" title="{{ stats.most_connected_medicine.name }}">
+        {{ stats.most_connected_medicine.name }}
+      </div>
+      <span class="badge bg-danger-subtle text-danger border border-danger-subtle px-2 py-0.5 rounded-pill" style="font-size: 11px;">
+        <i class="fas fa-link me-1"></i>{{ stats.most_connected_medicine.prescriptions_count }} Prescriptions
+      </span>
+    </div>
+    <div class="stat-icon-wrapper">
+      <i class="fas fa-capsules"></i>
+    </div>
+  </div>
+
+  <!-- Card 8: Most Connected Patient -->
+  <div class="stat-card teal shadow-sm">
+    <div class="stat-content" style="min-width: 0; flex: 1;">
+      <div class="stat-label">Most Connected Patient</div>
+      <div class="fw-bold text-dark fs-6 text-truncate mb-1" style="max-width: 175px;" title="{{ stats.most_connected_patient.name }}">
+        {{ stats.most_connected_patient.name }}
+      </div>
+      <span class="badge bg-teal-subtle text-teal border border-teal-subtle px-2 py-0.5 rounded-pill" style="font-size: 11px;">
+        <i class="fas fa-user-check me-1"></i>{{ stats.most_connected_patient.prescriptions_count }} Consultations
+      </span>
+    </div>
+    <div class="stat-icon-wrapper">
+      <i class="fas fa-user-check"></i>
+    </div>
+  </div>
+</div>
+
+<!-- ========================================================================= -->
+<!-- INTERACTIVE PROPERTY GRAPH CANVAS -->
+<!-- ========================================================================= -->
+<div id="tabPane-canvas" class="graph-card {% if request.args.get('maximized') %}maximized-mode{% endif %}">
+  <div class="graph-card-header">
+    <div class="graph-card-title">
+      <i class="fas fa-project-diagram text-info"></i> Interactive Property Graph Canvas
+    </div>
+    <div class="d-flex gap-2 flex-wrap">
+      <button class="canvas-action-btn" id="btn-toggle-labels" onclick="toggleEdgeLabels(event)" title="Toggle relationship text on edges">
+        <i class="fas fa-tag text-teal me-1"></i> <span id="label-btn-text">Show Edge Labels</span>
+      </button>
+      <button class="canvas-action-btn" id="btn-spread-spacing" onclick="toggleWideSpacing(event)" title="Expand node separation distance">
+        <i class="fas fa-arrows-alt-h text-info me-1"></i> <span id="spacing-btn-text">Wide Spacing</span>
+      </button>
+      <button class="canvas-action-btn" id="btn-fit-canvas" onclick="fitGraphView(event)" title="Zoom to fit all nodes">
+        <i class="fas fa-compress-arrows-alt text-primary me-1"></i> Fit View
+      </button>
+      <button class="canvas-action-btn {% if request.args.get('maximized') %}active{% endif %}" id="btn-maximize-canvas" onclick="toggleMaximizeGraph(event)" title="Maximize view to full screen (Esc to exit)">
+        {% if request.args.get('maximized') %}
+        <i class="fas fa-compress text-warning me-1" id="max-btn-icon"></i> <span id="max-btn-label">Minimize View</span>
+        {% else %}
+        <i class="fas fa-expand text-success me-1" id="max-btn-icon"></i> <span id="max-btn-label">Maximize View</span>
+        {% endif %}
+      </button>
+      <button class="canvas-action-btn-teal" id="btn-reset-graph" onclick="resetGraphState(event)" title="Reset layout and filters">
+        <i class="fas fa-sync-alt me-1"></i> Reset
+      </button>
+    </div>
+  </div>
+
+  <div class="graph-card-body">
+    <!-- Filter Pills Toolbar -->
+    <div class="graph-toolbar">
+      <span class="text-muted small fw-bold me-2">Highlight:</span>
+      <button class="graph-filter-btn active" data-filter="all">All Entities</button>
+      <button class="graph-filter-btn" data-filter="Patient"><span class="legend-dot" style="background:#008080;"></span> Patients</button>
+      <button class="graph-filter-btn" data-filter="Medicine"><span class="legend-dot" style="background:#059669;"></span> Medicines</button>
+      <button class="graph-filter-btn" data-filter="Doctor"><span class="legend-dot" style="background:#4f46e5;"></span> Doctors</button>
+      <button class="graph-filter-btn" data-filter="Pharmacy"><span class="legend-dot" style="background:#0284c7;"></span> Pharmacies</button>
+      <button class="graph-filter-btn" data-filter="Hospital"><span class="legend-dot" style="background:#7c3aed;"></span> Hospitals</button>
+      <button class="graph-filter-btn" data-filter="Supplier"><span class="legend-dot" style="background:#ea580c;"></span> Suppliers</button>
+      <button class="graph-filter-btn" data-filter="Manufacturer"><span class="legend-dot" style="background:#e11d48;"></span> Manufacturers</button>
+    </div>
+
+    <!-- Canvas & Inspector Row -->
+    <div class="row g-3">
+      <div class="col-lg-9">
+        <div id="network-canvas" class="vis-network-canvas">
+          <div class="position-absolute top-50 start-50 translate-middle text-center text-muted" id="graph-loading-spinner">
+            <div class="spinner-border text-info mb-2" role="status"></div>
+            <div>Rendering Graph Topology...</div>
+          </div>
+        </div>
+        <div class="d-flex justify-content-between align-items-center mt-2 text-muted small">
+          <span><i class="fas fa-mouse-pointer me-1"></i> Scroll to zoom &bull; Click node to inspect &bull; Drag to reposition</span>
+          <span id="canvas-node-count-badge" class="badge bg-light text-dark border">63 Nodes | 112 Edges</span>
+        </div>
+      </div>
+
+      <!-- Node Inspector Drawer -->
+      <div class="col-lg-3">
+        <div class="node-inspector" id="node-inspector-drawer">
+          <h6 class="fw-bold mb-3 border-bottom pb-2 text-info">
+            <i class="fas fa-info-circle me-1"></i> Entity Inspector
+          </h6>
+          <div id="inspector-placeholder" class="text-center py-5 text-muted">
+            <i class="fas fa-hand-pointer fa-2x mb-2 opacity-50"></i>
+            <p class="small">Click any node in the graph to inspect its properties, labels, and connected relationships.</p>
+          </div>
+          <div id="inspector-content" style="display:none;">
+            <div class="mb-3">
+              <span class="badge bg-primary" id="inspector-label-badge">Patient</span>
+              <h5 class="fw-bold mt-1 mb-0" id="inspector-title">Rahul Sharma</h5>
+              <div class="text-muted small" id="inspector-id">ID: Patient_401</div>
+            </div>
+
+            <div class="mb-3">
+              <span class="text-muted small fw-bold text-uppercase">Properties:</span>
+              <div id="inspector-properties" class="mt-1"></div>
+            </div>
+
+            <div class="border-top pt-2">
+              <span class="text-muted small fw-bold text-uppercase">Connected Relationships:</span>
+              <div id="inspector-edges" class="mt-2 d-flex flex-column gap-1"></div>
+            </div>
+
+            <div class="mt-4">
+              <button class="btn-saas btn-saas-teal btn-saas-sm w-100 justify-content-center" id="btn-explore-center-node">
+                <i class="fas fa-search-location"></i> Explore Neighborhood
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/graph_intelligence.js') }}?v=6.0"></script>
+<script>
+// Standalone, self-contained Edge Labels Toggle Controller
+function toggleEdgeLabels(e) {
+  if (e && e.preventDefault) {
+    e.preventDefault();
+    e.stopPropagation();
+  }
+  window.edgeLabelsVisible = !window.edgeLabelsVisible;
+  const isVis = window.edgeLabelsVisible;
+  const btn = document.getElementById('btn-toggle-labels');
+  const btnText = document.getElementById('label-btn-text');
+
+  if (btn) {
+    btn.classList.toggle('active', isVis);
+    if (btnText) {
+      btnText.innerText = isVis ? 'Hide Edge Labels' : 'Show Edge Labels';
+    }
+    btn.setAttribute('title', isVis ? 'Hide relationship text on edges' : 'Show relationship text on edges');
+  }
+
+  const ds = window.edgesDataSet || (typeof edgesDataSet !== 'undefined' ? edgesDataSet : null);
+  const edgesList = window.allEdges || (typeof allEdges !== 'undefined' ? allEdges : []);
+
+  if (ds && edgesList.length > 0) {
+    const updates = edgesList.map(function(edge) {
+      return {
+        id: edge.id,
+        label: isVis ? (edge._originalLabel || edge.label || '') : '',
+        font: {
+          size: 11,
+          color: '#f1f5f9',
+          strokeWidth: 2,
+          strokeColor: '#0b1120',
+          align: 'middle',
+          face: 'Inter, system-ui, sans-serif',
+          background: 'rgba(15, 23, 42, 0.90)',
+          min: 0,
+          max: 30
+        }
+      };
+    });
+    ds.update(updates);
+  }
+
+  const net = window.network || (typeof network !== 'undefined' ? network : null);
+  if (net) {
+    net.redraw();
+  }
+}
+window.toggleEdgeLabels = toggleEdgeLabels;
+
+// Auto-enable edge labels if ?labels=1 in URL
+if (window.location.search.includes('labels=1')) {
+  setTimeout(function() { toggleEdgeLabels(); }, 600);
+}
+
+// Standalone Wide Spacing Toggle Controller
+function toggleWideSpacing(e) {
+  if (e && e.preventDefault) {
+    e.preventDefault();
+    e.stopPropagation();
+  }
+  window.wideSpacing = !window.wideSpacing;
+  const isWide = window.wideSpacing;
+  const btn = document.getElementById('btn-spread-spacing');
+  const btnText = document.getElementById('spacing-btn-text');
+
+  if (btn) {
+    btn.classList.toggle('active', isWide);
+    if (btnText) {
+      btnText.innerText = isWide ? 'Normal Spacing' : 'Wide Spacing';
+    }
+  }
+
+  const net = window.network || (typeof network !== 'undefined' ? network : null);
+  if (net) {
+    net.setOptions({
+      physics: {
+        forceAtlas2Based: {
+          springLength: isWide ? 220 : 130,
+          gravitationalConstant: isWide ? -180 : -75,
+          centralGravity: isWide ? 0.003 : 0.008
+        }
+      }
+    });
+  }
+}
+window.toggleWideSpacing = toggleWideSpacing;
+
+// Standalone Fit View Controller
+function fitGraphView(e) {
+  if (e && e.preventDefault) {
+    e.preventDefault();
+    e.stopPropagation();
+  }
+  const net = window.network || (typeof network !== 'undefined' ? network : null);
+  if (net) {
+    net.fit({ animation: { duration: 600, easingFunction: 'easeInOutQuad' } });
+  }
+}
+window.fitGraphView = fitGraphView;
+
+// Standalone Reset Graph Controller
+function resetGraphState(e) {
+  if (e && e.preventDefault) {
+    e.preventDefault();
+    e.stopPropagation();
+  }
+  window.edgeLabelsVisible = false;
+  window.wideSpacing = false;
+  window.selectedNodeId = null;
+
+  const labelsBtn = document.getElementById('btn-toggle-labels');
+  const labelText = document.getElementById('label-btn-text');
+  if (labelsBtn) {
+    labelsBtn.classList.remove('active');
+    if (labelText) labelText.innerText = 'Show Edge Labels';
+  }
+
+  const spacingBtn = document.getElementById('btn-spread-spacing');
+  const spacingText = document.getElementById('spacing-btn-text');
+  if (spacingBtn) {
+    spacingBtn.classList.remove('active');
+    if (spacingText) spacingText.innerText = 'Wide Spacing';
+  }
+
+  document.querySelectorAll('.graph-filter-btn').forEach(b => b.classList.remove('active'));
+  const allBtn = document.querySelector('.graph-filter-btn[data-filter="all"]');
+  if (allBtn) allBtn.classList.add('active');
+
+  if (typeof loadGraphNetwork === 'function') {
+    loadGraphNetwork();
+  }
+  if (typeof clearNodeInspector === 'function') {
+    clearNodeInspector();
+  }
+}
+window.resetGraphState = resetGraphState;
+
+// Standalone, self-contained toggleMaximizeGraph logic directly on the page
+function toggleMaximizeGraph(e) {
+  if (e && e.preventDefault) {
+    e.preventDefault();
+    e.stopPropagation();
+  }
+  const card = document.getElementById('tabPane-canvas');
+  const btn = document.getElementById('btn-maximize-canvas');
+  const icon = document.getElementById('max-btn-icon');
+  const label = document.getElementById('max-btn-label');
+  if (!card) return;
+
+  const isMax = card.classList.contains('maximized-mode') || 
+                document.fullscreenElement === card || 
+                document.webkitFullscreenElement === card;
+
+  if (isMax) {
+    // Exit maximize mode
+    card.classList.remove('maximized-mode');
+    document.body.classList.remove('graph-canvas-maximized');
+    if (btn) btn.classList.remove('active');
+    if (icon) icon.className = 'fas fa-expand text-success me-1';
+    if (label) label.innerText = 'Maximize View';
+    if (btn) btn.setAttribute('title', 'Maximize view to full screen (Esc to exit)');
+
+    if (document.fullscreenElement || document.webkitFullscreenElement) {
+      if (document.exitFullscreen) {
+        document.exitFullscreen().catch(function() {});
+      } else if (document.webkitExitFullscreen) {
+        document.webkitExitFullscreen();
+      }
+    }
+  } else {
+    // Enter maximize mode
+    card.classList.add('maximized-mode');
+    document.body.classList.add('graph-canvas-maximized');
+    if (btn) btn.classList.add('active');
+    if (icon) icon.className = 'fas fa-compress text-warning me-1';
+    if (label) label.innerText = 'Minimize View';
+    if (btn) btn.setAttribute('title', 'Exit maximized view (or press Esc to exit)');
+
+    // Attempt browser native fullscreen if supported
+    try {
+      if (card.requestFullscreen) {
+        card.requestFullscreen().catch(function() {});
+      } else if (card.webkitRequestFullscreen) {
+        card.webkitRequestFullscreen();
+      }
+    } catch (err) {}
+  }
+
+  // Refresh Vis.js network canvas dimensions smoothly
+  setTimeout(function() {
+    var net = window.network || (typeof network !== 'undefined' ? network : null);
+    if (net) {
+      net.setSize('100%', '100%');
+      net.redraw();
+      net.fit({
+        animation: {
+          duration: 350,
+          easingFunction: 'easeInOutQuad'
+        }
+      });
+    }
+  }, 120);
+}
+
+// Handle native escape or browser fullscreen exit
+function handleFullscreenChange() {
+  if (!document.fullscreenElement && !document.webkitFullscreenElement) {
+    const card = document.getElementById('tabPane-canvas');
+    const btn = document.getElementById('btn-maximize-canvas');
+    const icon = document.getElementById('max-btn-icon');
+    const label = document.getElementById('max-btn-label');
+    if (card && card.classList.contains('maximized-mode')) {
+      card.classList.remove('maximized-mode');
+      document.body.classList.remove('graph-canvas-maximized');
+      if (btn) btn.classList.remove('active');
+      if (icon) icon.className = 'fas fa-expand text-success me-1';
+      if (label) label.innerText = 'Maximize View';
+      setTimeout(function() {
+        var net = window.network || (typeof network !== 'undefined' ? network : null);
+        if (net) {
+          net.setSize('100%', '100%');
+          net.redraw();
+          net.fit();
+        }
+      }, 120);
+    }
+  }
+}
+
+document.addEventListener('fullscreenchange', handleFullscreenChange);
+document.addEventListener('webkitfullscreenchange', handleFullscreenChange);
+
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') {
+    const card = document.getElementById('tabPane-canvas');
+    if (card && card.classList.contains('maximized-mode')) {
+      toggleMaximizeGraph();
+    }
+  }
+});
+
+// Ensure button click is explicitly wired
+document.addEventListener('DOMContentLoaded', function() {
+  const btn = document.getElementById('btn-maximize-canvas');
+  if (btn) {
+    btn.onclick = toggleMaximizeGraph;
+  }
+});
+</script>
+{% endblock %}

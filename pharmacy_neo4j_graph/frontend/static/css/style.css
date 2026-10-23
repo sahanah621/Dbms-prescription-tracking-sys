@@ -1,0 +1,2437 @@
+/* ==========================================================================
+   PHARMA CARE & INVENTORY - MODERN HEALTHCARE SAAS DESIGN SYSTEM
+   Theme: Deep Medical Navy (#0f2b48), Vibrant Clinical Teal (#0d9488), Pure Slate
+   ========================================================================== */
+
+:root {
+  /* Brand Color Palette */
+  --primary: #0f3460;
+  --primary-hover: #162447;
+  --primary-light: #e8eef7;
+  --primary-gradient: linear-gradient(135deg, #0f3460 0%, #1e4d8c 100%);
+  
+  --secondary: #0d9488;
+  --secondary-hover: #0f766e;
+  --secondary-light: #ccfbf1;
+  --secondary-gradient: linear-gradient(135deg, #0d9488 0%, #06b6d4 100%);
+  
+  --accent: #3b82f6;
+  --accent-light: #eff6ff;
+
+  /* State Colors */
+  --success: #10b981;
+  --success-light: #ecfdf5;
+  --warning: #f59e0b;
+  --warning-light: #fffbeb;
+  --danger: #ef4444;
+  --danger-light: #fef2f2;
+  --info: #06b6d4;
+  --info-light: #ecfeff;
+
+  /* Neutral Surface Colors */
+  --bg-body: #f8fafc;
+  --bg-sidebar: #0a192f;
+  --bg-card: #ffffff;
+  --bg-card-header: #f8fafc;
+  --bg-muted: #f1f5f9;
+  --bg-input: #ffffff;
+  
+  --text-main: #0f172a;
+  --text-muted: #64748b;
+  --text-sub: #475569;
+  --text-inverse: #ffffff;
+
+  /* Elevation & Borders */
+  --border-color: #e2e8f0;
+  --border-radius-sm: 8px;
+  --border-radius-md: 12px;
+  --border-radius-lg: 16px;
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.08), 0 2px 4px -1px rgba(0, 0, 0, 0.04);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -2px rgba(0, 0, 0, 0.03);
+  --shadow-hover: 0 12px 20px -3px rgba(15, 52, 96, 0.12);
+
+  /* Layout Dimensions */
+  --sidebar-width: 260px;
+  --topbar-height: 70px;
+  --transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* --------------------------------------------------------------------------
+   Dark Mode Theme System (Deep Medical Midnight & Clinical Slate)
+   -------------------------------------------------------------------------- */
+[data-theme="dark"],
+body.dark-theme,
+body.dark-mode {
+  /* Brand colors maintain authentic healthcare identity */
+  --primary: #38bdf8;
+  --primary-hover: #0284c7;
+  --primary-light: rgba(56, 189, 248, 0.12);
+  --primary-gradient: linear-gradient(135deg, #0284c7 0%, #0d9488 100%);
+  
+  --secondary: #0d9488;
+  --secondary-hover: #14b8a6;
+  --secondary-light: rgba(13, 148, 136, 0.18);
+  --secondary-gradient: linear-gradient(135deg, #0d9488 0%, #06b6d4 100%);
+  
+  --accent: #38bdf8;
+  --accent-light: rgba(56, 189, 248, 0.15);
+
+  /* Deep Midnight Surface Colors */
+  --bg-body: #070d18;
+  --bg-sidebar: #0a192f;
+  --bg-card: #0f172a;
+  --bg-card-header: #0b1322;
+  --bg-muted: #162032;
+  --bg-input: #131c2e;
+  
+  --text-main: #f8fafc;
+  --text-muted: #94a3b8;
+  --text-sub: #cbd5e1;
+  --text-inverse: #070d18;
+
+  /* Elevation & Borders */
+  --border-color: rgba(255, 255, 255, 0.08);
+  --shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.4);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.45);
+  --shadow-lg: 0 10px 25px -3px rgba(0, 0, 0, 0.6);
+  --shadow-hover: 0 12px 24px rgba(0, 0, 0, 0.5), 0 0 12px rgba(13, 148, 136, 0.15);
+}
+
+/* --------------------------------------------------------------------------
+   Global Resets & Typography
+   -------------------------------------------------------------------------- */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  background-color: var(--bg-body);
+  color: var(--text-main);
+  line-height: 1.5;
+  overflow-x: hidden;
+}
+
+a {
+  color: var(--secondary);
+  text-decoration: none;
+  transition: var(--transition);
+}
+
+a:hover {
+  color: var(--secondary-hover);
+}
+
+/* --------------------------------------------------------------------------
+   App Layout Grid
+   -------------------------------------------------------------------------- */
+.app-wrapper {
+  display: flex;
+  min-height: 100vh;
+}
+
+/* --------------------------------------------------------------------------
+   Sidebar Navigation
+   -------------------------------------------------------------------------- */
+.app-sidebar {
+  width: var(--sidebar-width);
+  background: var(--bg-sidebar);
+  color: #94a3b8;
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 1000;
+  transition: width 0.25s ease, transform 0.25s ease;
+  border-right: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.sidebar-brand {
+  padding: 22px 18px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.brand-icon {
+  width: 42px;
+  height: 42px;
+  border-radius: 10px;
+  background: var(--secondary-gradient);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-size: 20px;
+  box-shadow: 0 4px 12px rgba(13, 148, 136, 0.3);
+}
+
+.brand-title {
+  color: #ffffff;
+  font-size: 17px;
+  font-weight: 700;
+  letter-spacing: -0.3px;
+  line-height: 1.2;
+}
+
+.brand-subtitle {
+  color: #06b6d4;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.sidebar-role-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: rgba(14, 116, 144, 0.2);
+  border: 1px solid rgba(56, 189, 248, 0.35);
+  color: #38bdf8;
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  padding: 3px 9px;
+  border-radius: 20px;
+  margin-top: 6px;
+}
+
+.sidebar-scrollable {
+  flex: 1;
+  overflow-y: auto;
+  padding: 16px 12px;
+}
+
+.sidebar-scrollable::-webkit-scrollbar {
+  width: 4px;
+}
+.sidebar-scrollable::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+}
+.sidebar-scrollable::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.nav-section-title {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  color: #64748b;
+  font-weight: 700;
+  padding: 14px 14px 6px;
+  margin-top: 6px;
+}
+
+.nav-item-link {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 14px;
+  border-radius: 8px;
+  color: #94a3b8;
+  font-size: 13.5px;
+  font-weight: 500;
+  margin-bottom: 2px;
+  transition: all 0.2s ease;
+  text-decoration: none;
+}
+
+.nav-item-link:hover {
+  background: rgba(255, 255, 255, 0.06);
+  color: #ffffff;
+  transform: translateX(3px);
+}
+
+.nav-item-link:hover i {
+  color: #2dd4bf;
+  transform: scale(1.1);
+}
+
+/* Active Nav Item - Seamlessly Integrated Clinical Teal Theme */
+.nav-item-link.active {
+  background: linear-gradient(135deg, #0d9488 0%, #0891b2 100%) !important;
+  color: #ffffff !important;
+  font-weight: 600;
+  border-radius: 8px;
+  box-shadow: 0 4px 14px rgba(13, 148, 136, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.15) !important;
+}
+
+.nav-item-link.active i {
+  color: #ffffff !important;
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.25));
+}
+
+.nav-item-link i {
+  font-size: 16px;
+  width: 20px;
+  text-align: center;
+  color: #94a3b8;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+}
+
+.sidebar-footer {
+  padding: 16px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(0, 0, 0, 0.15);
+}
+
+.user-profile-badge {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.user-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--primary-gradient);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-weight: 600;
+  font-size: 13px;
+  border: 2px solid var(--secondary);
+}
+
+.user-info {
+  line-height: 1.2;
+}
+
+.user-name {
+  color: #fff;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.user-role {
+  color: #64748b;
+  font-size: 11px;
+}
+
+/* --------------------------------------------------------------------------
+   Main Content Canvas & Top Navigation
+   -------------------------------------------------------------------------- */
+.app-main {
+  flex: 1;
+  margin-left: var(--sidebar-width);
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.app-topbar {
+  height: var(--topbar-height);
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border-color);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 32px;
+  position: sticky;
+  top: 0;
+  z-index: 99;
+}
+
+.topbar-left {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.page-breadcrumb {
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+.page-breadcrumb span {
+  color: var(--text-main);
+  font-weight: 600;
+}
+
+.topbar-right {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.db-status-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.db-status-pill.mysql {
+  background: #e0f2fe;
+  color: #0369a1;
+  border: 1px solid #bae6fd;
+}
+
+.db-status-pill.demo {
+  background: #fef3c7;
+  color: #b45309;
+  border: 1px solid #fde68a;
+}
+
+.pulse-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: currentColor;
+  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.8);
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0% { transform: scale(0.95); opacity: 1; }
+  50% { transform: scale(1.3); opacity: 0.6; }
+  100% { transform: scale(0.95); opacity: 1; }
+}
+
+.content-container {
+  padding: 32px;
+  flex: 1;
+}
+
+/* --------------------------------------------------------------------------
+   Modern Dashboard Greeting & KPI Cards
+   -------------------------------------------------------------------------- */
+.dashboard-header {
+  margin-bottom: 28px;
+}
+
+.dashboard-title {
+  font-size: 26px;
+  font-weight: 700;
+  color: var(--primary);
+  letter-spacing: -0.5px;
+}
+
+.dashboard-subtitle {
+  font-size: 14px;
+  color: var(--text-muted);
+}
+
+.stat-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 20px;
+  margin-bottom: 32px;
+}
+
+.stat-card {
+  background: var(--bg-card);
+  border-radius: var(--border-radius-md);
+  padding: 22px 20px;
+  border: 1px solid var(--border-color);
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  transition: var(--transition);
+  position: relative;
+  overflow: hidden;
+}
+
+.stat-card:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-hover);
+  border-color: #cbd5e1;
+}
+
+.stat-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+}
+
+.stat-card.blue::before { background: #3b82f6; }
+.stat-card.teal::before { background: #0d9488; }
+.stat-card.amber::before { background: #f59e0b; }
+.stat-card.green::before { background: #10b981; }
+.stat-card.rose::before { background: #f43f5e; }
+.stat-card.indigo::before { background: #6366f1; }
+
+.stat-content {
+  line-height: 1.3;
+}
+
+.stat-label {
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--text-muted);
+  margin-bottom: 6px;
+}
+
+.stat-value {
+  font-size: 26px;
+  font-weight: 700;
+  color: var(--text-main);
+  letter-spacing: -0.5px;
+}
+
+.stat-subtext {
+  font-size: 11.5px;
+  color: var(--text-muted);
+  margin-top: 4px;
+}
+
+.stat-icon-wrapper {
+  width: 52px;
+  height: 52px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+}
+
+.stat-card.blue .stat-icon-wrapper { background: #eff6ff; color: #2563eb; }
+.stat-card.teal .stat-icon-wrapper { background: #f0fdfa; color: #0d9488; }
+.stat-card.amber .stat-icon-wrapper { background: #fffbeb; color: #d97706; }
+.stat-card.green .stat-icon-wrapper { background: #ecfdf5; color: #059669; }
+.stat-card.rose .stat-icon-wrapper { background: #fff1f2; color: #e11d48; }
+.stat-card.indigo .stat-icon-wrapper { background: #eef2ff; color: #4f46e5; }
+
+/* --------------------------------------------------------------------------
+   Chart Grid Cards
+   -------------------------------------------------------------------------- */
+.chart-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 24px;
+  margin-bottom: 32px;
+}
+
+@media (max-width: 1024px) {
+  .chart-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.chart-card {
+  background: var(--bg-card);
+  border-radius: var(--border-radius-md);
+  border: 1px solid var(--border-color);
+  padding: 24px;
+  box-shadow: var(--shadow-sm);
+}
+
+.chart-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.chart-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--primary);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.chart-badge {
+  font-size: 11px;
+  padding: 3px 8px;
+  border-radius: 12px;
+  background: var(--bg-muted);
+  color: var(--text-muted);
+  font-weight: 600;
+}
+
+/* --------------------------------------------------------------------------
+   Card Component
+   -------------------------------------------------------------------------- */
+.saas-card {
+  background: var(--bg-card);
+  border-radius: var(--border-radius-md);
+  border: 1px solid var(--border-color);
+  box-shadow: var(--shadow-sm);
+  margin-bottom: 24px;
+  overflow: hidden;
+}
+
+.saas-card-header {
+  padding: 18px 24px;
+  border-bottom: 1px solid var(--border-color);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #ffffff;
+}
+
+.saas-card-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--primary);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.saas-card-body {
+  padding: 24px;
+}
+
+/* --------------------------------------------------------------------------
+   Data Tables
+   -------------------------------------------------------------------------- */
+.table-responsive {
+  overflow-x: auto;
+}
+
+.saas-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  font-size: 13.5px;
+}
+
+.saas-table th {
+  background: #f8fafc;
+  color: var(--text-sub);
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: 11px;
+  letter-spacing: 0.6px;
+  padding: 12px 18px;
+  border-bottom: 1px solid var(--border-color);
+  text-align: left;
+}
+
+.saas-table td {
+  padding: 14px 18px;
+  border-bottom: 1px solid #f1f5f9;
+  color: var(--text-main);
+  vertical-align: middle;
+}
+
+.saas-table tr:last-child td {
+  border-bottom: none;
+}
+
+.saas-table tr:hover td {
+  background: #f8fafc;
+}
+
+/* --------------------------------------------------------------------------
+   Enterprise Segmented Navigation Pills & Stock Table Refinements
+   -------------------------------------------------------------------------- */
+.custom-saas-pills .nav-link {
+  color: var(--text-muted);
+  font-weight: 600;
+  font-size: 13.5px;
+  padding: 8px 18px;
+  border-radius: 8px;
+  background: #f1f5f9;
+  border: 1px solid #e2e8f0;
+  margin-right: 8px;
+  transition: all 0.2s ease;
+}
+
+.custom-saas-pills .nav-link:hover {
+  background: #e2e8f0;
+  color: var(--text-main);
+}
+
+.custom-saas-pills .nav-link.active {
+  background: var(--primary) !important;
+  color: #ffffff !important;
+  border-color: var(--primary) !important;
+  box-shadow: 0 2px 6px rgba(15, 52, 96, 0.25);
+}
+
+.custom-saas-pills .nav-link.active .badge {
+  background: rgba(255, 255, 255, 0.25) !important;
+  color: #ffffff !important;
+}
+
+.stock-stat-card {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 18px 20px;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.stock-stat-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.06);
+}
+
+.stock-stat-card .stat-icon-wrapper {
+  width: 44px;
+  height: 44px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+}
+
+/* --------------------------------------------------------------------------
+   Status Badges
+   -------------------------------------------------------------------------- */
+.badge-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 11.5px;
+  font-weight: 600;
+  letter-spacing: 0.2px;
+}
+
+.badge-status.success {
+  background: #dcfce7;
+  color: #15803d;
+}
+
+.badge-status.warning {
+  background: #fef3c7;
+  color: #b45309;
+}
+
+.badge-status.danger {
+  background: #fee2e2;
+  color: #b91c1c;
+}
+
+.badge-status.info {
+  background: #e0f2fe;
+  color: #0369a1;
+}
+
+.badge-status.dark {
+  background: #f1f5f9;
+  color: #475569;
+}
+
+.badge-status.teal {
+  background: #ccfbf1;
+  color: #0f766e;
+}
+
+/* Teal Utilities & System Classes */
+.bg-teal {
+  background-color: #0d9488 !important;
+  color: #ffffff !important;
+}
+
+.text-teal {
+  color: #0d9488 !important;
+}
+
+.bg-teal-subtle {
+  background-color: #ccfbf1 !important;
+  color: #0f766e !important;
+}
+
+.border-teal {
+  border-color: #0d9488 !important;
+}
+
+.border-teal-subtle {
+  border-color: #99f6e4 !important;
+}
+
+/* --------------------------------------------------------------------------
+   Procurement Order Tracking Stepper & Consignment Logistics
+   -------------------------------------------------------------------------- */
+.order-stepper {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  position: relative;
+  margin: 16px 0 24px;
+  padding: 0 12px;
+}
+
+.stepper-track {
+  position: absolute;
+  top: 18px;
+  left: 57px;
+  right: 57px;
+  height: 4px;
+  background: #e2e8f0;
+  border-radius: 999px;
+  z-index: 1;
+  overflow: hidden;
+}
+
+.stepper-progress-bar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, #0d9488 0%, #14b8a6 100%);
+  border-radius: 999px;
+  transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1), background 0.3s ease;
+}
+
+.step-node {
+  position: relative;
+  z-index: 3;
+  text-align: center;
+  width: 90px;
+  flex-shrink: 0;
+}
+
+.step-circle {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: #ffffff;
+  border: 2.5px solid #cbd5e1;
+  color: #64748b;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  font-weight: 700;
+  margin: 0 auto 8px;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.step-node.active .step-circle {
+  background: #0d9488;
+  border-color: #0d9488;
+  color: #ffffff;
+  box-shadow: 0 0 0 5px rgba(13, 148, 136, 0.2), 0 3px 8px rgba(13, 148, 136, 0.25);
+  transform: scale(1.06);
+}
+
+.step-node.completed .step-circle {
+  background: #0d9488;
+  border-color: #0d9488;
+  color: #ffffff;
+  box-shadow: 0 2px 6px rgba(13, 148, 136, 0.2);
+}
+
+.step-node.cancelled .step-circle {
+  background: #ef4444;
+  border-color: #ef4444;
+  color: #ffffff;
+  box-shadow: 0 0 0 4px rgba(239, 68, 68, 0.2);
+}
+
+.step-title {
+  font-size: 12px;
+  font-weight: 700;
+  color: #475569;
+  line-height: 1.3;
+  margin-bottom: 3px;
+  transition: color 0.2s ease;
+}
+
+.step-node.active .step-title {
+  color: #0d9488;
+  font-weight: 800;
+}
+
+.step-node.completed .step-title {
+  color: #0f172a;
+}
+
+.step-subtitle {
+  font-size: 10.5px;
+  font-weight: 500;
+  color: #64748b;
+  display: inline-block;
+  padding: 1px 7px;
+  border-radius: 999px;
+  background: #f1f5f9;
+  border: 1px solid #e2e8f0;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.step-node.active .step-subtitle {
+  color: #0d9488;
+  background: rgba(13, 148, 136, 0.08);
+  border-color: rgba(13, 148, 136, 0.25);
+  font-weight: 600;
+}
+
+.step-node.completed .step-subtitle {
+  color: #334155;
+  background: #f8fafc;
+}
+
+
+/* --------------------------------------------------------------------------
+   Buttons & Form Controls
+   -------------------------------------------------------------------------- */
+.btn-saas {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  border-radius: var(--border-radius-sm);
+  font-size: 13.5px;
+  font-weight: 600;
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.btn-saas-primary {
+  background: var(--primary);
+  color: #fff;
+}
+.btn-saas-primary:hover {
+  background: var(--primary-hover);
+  color: #fff;
+}
+
+.btn-saas-teal {
+  background: var(--secondary);
+  color: #fff;
+}
+.btn-saas-teal:hover {
+  background: var(--secondary-hover);
+  color: #fff;
+}
+
+.btn-outline-teal {
+  color: var(--secondary);
+  border-color: var(--secondary);
+  background: transparent;
+  transition: var(--transition);
+}
+.btn-outline-teal:hover, .btn-outline-teal:focus, .btn-outline-teal.active {
+  color: #fff;
+  background-color: var(--secondary);
+  border-color: var(--secondary);
+}
+
+.btn-saas-outline {
+  background: #fff;
+  border-color: var(--border-color);
+  color: var(--text-sub);
+}
+.btn-saas-outline:hover {
+  background: var(--bg-muted);
+  color: var(--text-main);
+  border-color: #cbd5e1;
+}
+
+.btn-saas-sm {
+  padding: 5px 10px;
+  font-size: 12px;
+  border-radius: 6px;
+}
+
+.form-control-saas {
+  width: 100%;
+  padding: 9px 14px;
+  border-radius: var(--border-radius-sm);
+  border: 1px solid var(--border-color);
+  background: #fff;
+  font-size: 13.5px;
+  color: var(--text-main);
+  transition: var(--transition);
+}
+
+.form-control-saas:focus {
+  outline: none;
+  border-color: var(--secondary);
+  box-shadow: 0 0 0 3px rgba(13, 148, 136, 0.15);
+}
+
+select.form-control-saas,
+.form-select.form-control-saas {
+  background-color: #ffffff !important;
+  color: #0f172a !important;
+  border-color: #cbd5e1 !important;
+}
+
+select.form-control-saas option,
+.form-select.form-control-saas option {
+  background-color: #ffffff !important;
+  color: #0f172a !important;
+}
+
+
+/* --------------------------------------------------------------------------
+   High-Contrast Form Controls & Labels (Default Clean SaaS & Dark Modals)
+   -------------------------------------------------------------------------- */
+/* Standard light modals & cards: crisp dark text */
+label.form-label,
+.modal-content label.form-label,
+.modal-body label.form-label {
+  color: #1e293b !important;
+  font-weight: 600 !important;
+  font-size: 13px !important;
+  margin-bottom: 5px !important;
+}
+
+/* Specific dark modals only */
+.modal-content.bg-dark label.form-label,
+.modal-content.text-white label.form-label,
+.modal-dark label.form-label {
+  color: #cbd5e1 !important;
+}
+
+/* Form selects & controls default to clean white with crisp dark text */
+select.form-select,
+.modal select.form-select,
+.form-control:not(.cypher-search-input):not(.bg-dark):not(#preset-search-input):not(.graph-search-input),
+.modal .form-control {
+  background-color: #ffffff !important;
+  color: #0f172a !important;
+  border-color: #cbd5e1 !important;
+}
+
+select.form-select:focus,
+.modal select.form-select:focus,
+.form-control:not(.cypher-search-input):not(.bg-dark):not(#preset-search-input):not(.graph-search-input):focus,
+.modal .form-control:focus {
+  border-color: #0d9488 !important;
+  box-shadow: 0 0 0 3px rgba(13, 148, 136, 0.18) !important;
+  background-color: #ffffff !important;
+  color: #0f172a !important;
+}
+
+/* Default clean dropdown options */
+select option,
+select.form-select option,
+.modal select option {
+  background-color: #ffffff !important;
+  color: #0f172a !important;
+  padding: 8px 12px !important;
+}
+
+/* Specific dark modals / inputs */
+.modal-content.bg-dark select.form-select,
+.modal-content.text-white select.form-select,
+.form-select.bg-dark,
+.form-control.bg-dark {
+  background-color: #1e293b !important;
+  color: #f8fafc !important;
+  border-color: rgba(148, 163, 184, 0.4) !important;
+}
+
+.modal-content.bg-dark select option,
+.modal-content.text-white select option,
+.form-select.bg-dark option {
+  background-color: #0f172a !important;
+  color: #ffffff !important;
+}
+
+
+/* --------------------------------------------------------------------------
+   Invoice / Prescription Sheet Display
+   -------------------------------------------------------------------------- */
+.invoice-sheet {
+  background: #fff;
+  border-radius: var(--border-radius-md);
+  border: 1px solid var(--border-color);
+  padding: 40px;
+  box-shadow: var(--shadow-sm);
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.invoice-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding-bottom: 24px;
+  border-bottom: 2px solid #e2e8f0;
+  margin-bottom: 24px;
+}
+
+.invoice-meta {
+  text-align: right;
+}
+
+.invoice-parties {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 32px;
+  margin-bottom: 32px;
+}
+
+.invoice-party-box h5 {
+  font-size: 13px;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  letter-spacing: 0.5px;
+  margin-bottom: 8px;
+}
+
+/* --------------------------------------------------------------------------
+   Database Operations Console
+   -------------------------------------------------------------------------- */
+.sql-display-box {
+  background: #0f172a;
+  color: #38bdf8;
+  padding: 16px 20px;
+  border-radius: var(--border-radius-sm);
+  font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+  font-size: 13px;
+  overflow-x: auto;
+  margin: 12px 0;
+  line-height: 1.6;
+}
+
+.trigger-step-card {
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius-sm);
+  padding: 16px;
+  margin-bottom: 12px;
+  background: #ffffff;
+}
+
+/* --------------------------------------------------------------------------
+   Toast Container
+   -------------------------------------------------------------------------- */
+.toast-container {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.saas-toast {
+  min-width: 320px;
+  padding: 14px 18px;
+  border-radius: 10px;
+  background: #fff;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.12);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 13.5px;
+  animation: slideIn 0.3s ease-out;
+  border-left: 4px solid var(--secondary);
+}
+
+.saas-toast.success { border-left-color: var(--success); }
+.saas-toast.error { border-left-color: var(--danger); }
+.saas-toast.warning { border-left-color: var(--warning); }
+
+@keyframes slideIn {
+  from { transform: translateX(100%); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+
+/* --------------------------------------------------------------------------
+   Command Palette (⌘K)
+   -------------------------------------------------------------------------- */
+.palette-result-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 14px;
+  border-radius: 8px;
+  color: #f1f5f9;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  border: 1px solid transparent;
+  margin-bottom: 4px;
+}
+.palette-result-item:hover, .palette-result-item.active {
+  background: rgba(13, 148, 136, 0.22);
+  border-color: rgba(13, 148, 136, 0.55);
+  color: #ffffff;
+  transform: translateX(2px);
+}
+.palette-result-item .item-icon {
+  width: 34px;
+  height: 34px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.08);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 15px;
+  flex-shrink: 0;
+}
+.palette-result-item .item-title {
+  font-size: 13.5px;
+  font-weight: 600;
+  color: #f8fafc;
+}
+/* --------------------------------------------------------------------------
+   Operational Notification Center Dropdown
+   -------------------------------------------------------------------------- */
+.notif-menu-panel {
+  width: 580px !important;
+  max-width: 95vw !important;
+  background: #0f172a !important;
+  border-radius: 16px !important;
+  border: 1px solid rgba(56, 189, 248, 0.25) !important;
+  box-shadow: 0 25px 65px -12px rgba(0, 0, 0, 0.75), 0 0 0 1px rgba(255, 255, 255, 0.08) !important;
+  overflow: hidden !important;
+  z-index: 1060;
+}
+
+.notif-item-card {
+  background: #162032;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  padding: 13px 16px;
+  margin-bottom: 10px;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+}
+
+.notif-item-card:hover {
+  background: #1c293f;
+  border-color: rgba(56, 189, 248, 0.35);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.35);
+}
+
+.notif-item-card.danger {
+  border-left: 4px solid #ef4444 !important;
+}
+
+.notif-item-card.warning {
+  border-left: 4px solid #f59e0b !important;
+}
+
+.notif-item-card.info {
+  border-left: 4px solid #0d9488 !important;
+}
+
+.notif-filter-btn {
+  font-size: 12px;
+  font-weight: 600;
+  padding: 4px 12px;
+  border-radius: 20px;
+  transition: all 0.15s ease;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: #162032;
+  color: #cbd5e1;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+}
+
+.notif-filter-btn:hover {
+  background: #1e2d42;
+  color: #ffffff;
+  border-color: rgba(56, 189, 248, 0.4);
+}
+
+.notif-filter-btn.active {
+  background: #0d9488 !important;
+  color: #ffffff !important;
+  border-color: #14b8a6 !important;
+  box-shadow: 0 2px 10px rgba(13, 148, 136, 0.5);
+}
+
+#notif-items-container::-webkit-scrollbar {
+  width: 6px;
+}
+
+#notif-items-container::-webkit-scrollbar-track {
+  background: rgba(15, 23, 42, 0.6);
+}
+
+#notif-items-container::-webkit-scrollbar-thumb {
+  background: rgba(148, 163, 184, 0.35);
+  border-radius: 4px;
+}
+
+#notif-items-container::-webkit-scrollbar-thumb:hover {
+  background: rgba(148, 163, 184, 0.6);
+}
+
+/* --------------------------------------------------------------------------
+   Print Stylesheet
+   -------------------------------------------------------------------------- */
+@media print {
+  .app-sidebar, .app-topbar, .btn-saas, .no-print {
+    display: none !important;
+  }
+  .app-main {
+    margin-left: 0 !important;
+  }
+  .content-container {
+    padding: 0 !important;
+  }
+  .invoice-sheet {
+    border: none !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+    max-width: 100% !important;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Interactive SQL Console & Dark Code Editor
+   -------------------------------------------------------------------------- */
+.sql-dark-editor-wrapper {
+  border-radius: 10px;
+  overflow: hidden;
+  border: 1px solid #1e293b;
+  background: #090d16;
+  box-shadow: 0 4px 14px rgba(15, 23, 42, 0.15);
+}
+
+.sql-dark-editor-header {
+  background: #0f172a;
+  border-bottom: 1px solid #1e293b;
+  padding: 9px 16px;
+}
+
+#sqlConsoleEditor,
+textarea#sqlConsoleEditor,
+textarea.sql-dark-editor {
+  background-color: #090d16 !important;
+  color: #38bdf8 !important;
+  border: none !important;
+  border-radius: 0 0 10px 10px !important;
+  caret-color: #38bdf8 !important;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace !important;
+  font-size: 13.5px !important;
+  line-height: 1.6 !important;
+  padding: 16px 18px !important;
+  resize: vertical !important;
+  box-shadow: none !important;
+  outline: none !important;
+  width: 100%;
+}
+
+#sqlConsoleEditor::placeholder,
+textarea#sqlConsoleEditor::placeholder {
+  color: #64748b !important;
+  opacity: 0.85 !important;
+}
+
+#sqlConsoleEditor:focus,
+textarea#sqlConsoleEditor:focus {
+  background-color: #090d16 !important;
+  color: #38bdf8 !important;
+  box-shadow: none !important;
+  outline: none !important;
+  border: none !important;
+}
+
+/* --------------------------------------------------------------------------
+   Dark Database Operations Console Studio Theme
+   -------------------------------------------------------------------------- */
+.db-studio-card {
+  background: #0f172a !important;
+  border: 1px solid #1e293b !important;
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.25);
+  color: #f8fafc;
+}
+
+.db-studio-card-header {
+  background: #090d16 !important;
+  border-bottom: 1px solid #1e293b !important;
+  padding: 14px 22px;
+}
+
+.db-studio-input,
+.db-studio-card select.form-select,
+.db-studio-card input.form-control {
+  background-color: #1e293b !important;
+  color: #f8fafc !important;
+  border: 1px solid #334155 !important;
+  border-radius: 8px !important;
+  font-size: 13px !important;
+}
+
+.db-studio-card select.form-select option {
+  background-color: #0f172a !important;
+  color: #f8fafc !important;
+}
+
+.db-studio-card select.form-select:focus,
+.db-studio-card input.form-control:focus {
+  border-color: #38bdf8 !important;
+  box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.2) !important;
+}
+
+.db-studio-card label.form-label {
+  color: #94a3b8 !important;
+  font-size: 11.5px !important;
+  font-weight: 600 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.5px !important;
+}
+
+.db-query-item-btn {
+  background: #1e293b;
+  border: 1px solid #334155;
+  color: #f8fafc;
+  border-radius: 8px;
+  padding: 11px 14px;
+  text-align: left;
+  transition: all 0.15s ease;
+  cursor: pointer;
+  width: 100%;
+}
+
+.db-query-item-btn:hover {
+  background: #334155;
+  border-color: #38bdf8;
+  transform: translateY(-1px);
+}
+
+.db-studio-card .saas-table {
+  color: #f8fafc;
+}
+
+.db-studio-card .saas-table th {
+  background: #090d16;
+  color: #94a3b8;
+  border-bottom: 1px solid #1e293b;
+}
+
+.db-studio-card .saas-table td {
+  border-bottom: 1px solid #1e293b;
+  color: #f8fafc;
+}
+
+.db-studio-card .saas-table tr:hover td {
+  background: #1e293b;
+}
+
+.db-studio-card .trigger-step-card {
+  background: #1e293b !important;
+  border: 1px solid #334155 !important;
+  color: #f8fafc !important;
+}
+
+/* Dark Studio Telemetry Table & Bootstrap Overrides */
+.db-studio-card table,
+.db-studio-card .table,
+.db-studio-table {
+  background-color: #020617 !important;
+  color: #f8fafc !important;
+  --bs-table-bg: #020617 !important;
+  --bs-table-color: #f8fafc !important;
+  --bs-table-accent-bg: transparent !important;
+  --bs-table-striped-bg: #090d16 !important;
+  --bs-table-active-bg: #1e293b !important;
+  --bs-table-hover-bg: #1e293b !important;
+  --bs-table-border-color: #1e293b !important;
+}
+
+.db-studio-card table > :not(caption) > * > *,
+.db-studio-card .table > :not(caption) > * > *,
+.db-studio-table > :not(caption) > * > * {
+  background-color: #020617 !important;
+  color: #f8fafc !important;
+  border-bottom-color: #1e293b !important;
+  box-shadow: none !important;
+}
+
+.db-studio-card table thead th,
+.db-studio-card .table thead th,
+.db-studio-table thead th {
+  background-color: #1e293b !important;
+  color: #94a3b8 !important;
+  font-size: 11px !important;
+  font-weight: 600 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.5px !important;
+  border-bottom: 1px solid #334155 !important;
+  padding: 10px 14px !important;
+}
+
+.db-studio-card table tbody td,
+.db-studio-card .table tbody td,
+.db-studio-table tbody td {
+  background-color: #020617 !important;
+  color: #f8fafc !important;
+  border-bottom: 1px solid #1e293b !important;
+  padding: 11px 14px !important;
+  vertical-align: middle !important;
+}
+
+.db-studio-card table tbody tr:hover td,
+.db-studio-card .table tbody tr:hover td,
+.db-studio-table tbody tr:hover td {
+  background-color: #090d16 !important;
+}
+
+.db-studio-card code {
+  color: #38bdf8 !important;
+  background-color: #1e293b !important;
+  padding: 2px 6px !important;
+  border-radius: 4px !important;
+  font-size: 11.5px !important;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace !important;
+}
+
+/* ==========================================================================
+   HEALTHCARE SAAS DARK MODE ADAPTATIONS & THEME CONTROLS
+   Preserves authentic clinical teal, deep navy, and distinct semantic colors.
+   ========================================================================== */
+
+/* Quick Theme Toggle Button */
+.btn-theme-toggle {
+  background: #ffffff;
+  border-color: #e2e8f0;
+  color: #64748b;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.btn-theme-toggle:hover {
+  background: #f8fafc;
+  border-color: #cbd5e1;
+  color: #0d9488;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+[data-theme="dark"] .btn-theme-toggle {
+  background: #0f172a !important;
+  border-color: #1e293b !important;
+  color: #fbbf24 !important;
+}
+
+[data-theme="dark"] .btn-theme-toggle:hover {
+  background: #162032 !important;
+  border-color: rgba(245, 158, 11, 0.4) !important;
+  box-shadow: 0 0 14px rgba(245, 158, 11, 0.25) !important;
+  transform: translateY(-1px);
+}
+
+/* Base Canvas & Background in Dark Mode */
+[data-theme="dark"] body,
+[data-theme="dark"] .app-wrapper,
+[data-theme="dark"] .app-main {
+  background-color: var(--bg-body) !important;
+  color: var(--text-main) !important;
+}
+
+/* Topbar Sticky Navigation */
+[data-theme="dark"] .app-topbar {
+  background: rgba(15, 23, 42, 0.88) !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
+}
+
+[data-theme="dark"] .page-breadcrumb {
+  color: #94a3b8 !important;
+}
+
+[data-theme="dark"] .page-breadcrumb span,
+[data-theme="dark"] .page-breadcrumb .text-dark {
+  color: #f8fafc !important;
+}
+
+[data-theme="dark"] .page-breadcrumb .text-primary {
+  color: #38bdf8 !important;
+}
+
+/* Headings & Text Color Overrides */
+[data-theme="dark"] h1,
+[data-theme="dark"] h2,
+[data-theme="dark"] h3,
+[data-theme="dark"] h4,
+[data-theme="dark"] h5,
+[data-theme="dark"] h6,
+[data-theme="dark"] .dashboard-title,
+[data-theme="dark"] .saas-card-title,
+[data-theme="dark"] .chart-title {
+  color: #f8fafc !important;
+}
+
+[data-theme="dark"] .text-dark {
+  color: #f8fafc !important;
+}
+
+[data-theme="dark"] .text-muted {
+  color: #94a3b8 !important;
+}
+
+[data-theme="dark"] .text-secondary {
+  color: #cbd5e1 !important;
+}
+
+/* Cards & Surface Containers */
+[data-theme="dark"] .saas-card,
+[data-theme="dark"] .chart-card,
+[data-theme="dark"] .card {
+  background-color: #0f172a !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.45) !important;
+  color: #f8fafc !important;
+}
+
+[data-theme="dark"] .saas-card-header,
+[data-theme="dark"] .card-header {
+  background-color: #0b1322 !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
+}
+
+[data-theme="dark"] .card-footer {
+  background-color: #0b1322 !important;
+  border-top: 1px solid rgba(255, 255, 255, 0.08) !important;
+}
+
+/* KPI Stat Cards (Maintaining calibrated color identities) */
+[data-theme="dark"] .stat-card,
+[data-theme="dark"] .stock-stat-card {
+  background-color: #0f172a !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.35) !important;
+}
+
+[data-theme="dark"] .stat-card:hover,
+[data-theme="dark"] .stock-stat-card:hover {
+  border-color: rgba(56, 189, 248, 0.35) !important;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.55), 0 0 12px rgba(13, 148, 136, 0.15) !important;
+}
+
+[data-theme="dark"] .stat-value {
+  color: #f8fafc !important;
+}
+
+[data-theme="dark"] .stat-label,
+[data-theme="dark"] .stat-subtext {
+  color: #94a3b8 !important;
+}
+
+/* High-contrast Glowing Icon Wrappers */
+[data-theme="dark"] .stat-card.blue .stat-icon-wrapper {
+  background: rgba(37, 99, 235, 0.18) !important;
+  color: #60a5fa !important;
+}
+[data-theme="dark"] .stat-card.teal .stat-icon-wrapper {
+  background: rgba(13, 148, 136, 0.2) !important;
+  color: #2dd4bf !important;
+}
+[data-theme="dark"] .stat-card.amber .stat-icon-wrapper {
+  background: rgba(245, 158, 11, 0.18) !important;
+  color: #fbbf24 !important;
+}
+[data-theme="dark"] .stat-card.green .stat-icon-wrapper {
+  background: rgba(16, 185, 129, 0.18) !important;
+  color: #34d399 !important;
+}
+[data-theme="dark"] .stat-card.rose .stat-icon-wrapper {
+  background: rgba(244, 63, 94, 0.18) !important;
+  color: #fb7185 !important;
+}
+[data-theme="dark"] .stat-card.indigo .stat-icon-wrapper {
+  background: rgba(99, 102, 241, 0.18) !important;
+  color: #a5b4fc !important;
+}
+
+/* Tables in Dark Mode */
+[data-theme="dark"] .saas-table {
+  color: #f8fafc !important;
+}
+
+[data-theme="dark"] .saas-table th {
+  background: #090e1a !important;
+  color: #94a3b8 !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.09) !important;
+}
+
+[data-theme="dark"] .saas-table td {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05) !important;
+  color: #f1f5f9 !important;
+}
+
+[data-theme="dark"] .saas-table tr:hover td {
+  background: #162032 !important;
+}
+
+/* Bootstrap Table Dark Integration */
+[data-theme="dark"] .table {
+  --bs-table-bg: transparent !important;
+  --bs-table-color: #f1f5f9 !important;
+  --bs-table-striped-bg: rgba(255, 255, 255, 0.02) !important;
+  --bs-table-hover-bg: #162032 !important;
+  --bs-table-border-color: rgba(255, 255, 255, 0.07) !important;
+  color: #f1f5f9 !important;
+}
+
+[data-theme="dark"] .table th {
+  background: #090e1a !important;
+  color: #94a3b8 !important;
+  border-bottom-color: rgba(255, 255, 255, 0.09) !important;
+}
+
+[data-theme="dark"] .table td {
+  border-bottom-color: rgba(255, 255, 255, 0.05) !important;
+  color: #f1f5f9 !important;
+}
+
+/* Form Controls & Inputs */
+[data-theme="dark"] .form-control,
+[data-theme="dark"] .form-select,
+[data-theme="dark"] input.form-control,
+[data-theme="dark"] select.form-select,
+[data-theme="dark"] textarea.form-control,
+[data-theme="dark"] input[type="text"],
+[data-theme="dark"] input[type="number"],
+[data-theme="dark"] input[type="date"],
+[data-theme="dark"] input[type="search"] {
+  background-color: #131c2e !important;
+  color: #f8fafc !important;
+  border: 1px solid #334155 !important;
+}
+
+[data-theme="dark"] .form-control::placeholder,
+[data-theme="dark"] textarea::placeholder {
+  color: #64748b !important;
+}
+
+[data-theme="dark"] .form-control:focus,
+[data-theme="dark"] .form-select:focus {
+  background-color: #131c2e !important;
+  color: #ffffff !important;
+  border-color: #0d9488 !important;
+  box-shadow: 0 0 0 3px rgba(13, 148, 136, 0.25) !important;
+}
+
+[data-theme="dark"] .form-select option {
+  background-color: #0f172a !important;
+  color: #f8fafc !important;
+}
+
+[data-theme="dark"] .form-label {
+  color: #cbd5e1 !important;
+}
+
+[data-theme="dark"] .input-group-text {
+  background-color: #0b1322 !important;
+  color: #94a3b8 !important;
+  border-color: #334155 !important;
+}
+
+/* Modals & Dialogs */
+[data-theme="dark"] .modal-content {
+  background-color: #0f172a !important;
+  color: #f8fafc !important;
+  border: 1px solid rgba(255, 255, 255, 0.12) !important;
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.8) !important;
+}
+
+[data-theme="dark"] .modal-header {
+  background-color: #0b1322 !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
+}
+
+[data-theme="dark"] .modal-footer {
+  background-color: #0b1322 !important;
+  border-top: 1px solid rgba(255, 255, 255, 0.08) !important;
+}
+
+[data-theme="dark"] .modal-title {
+  color: #f8fafc !important;
+}
+
+[data-theme="dark"] .btn-close {
+  filter: invert(1) grayscale(100%) brightness(200%);
+}
+
+/* Dropdown Menus */
+[data-theme="dark"] .dropdown-menu {
+  background-color: #0f172a !important;
+  border: 1px solid rgba(255, 255, 255, 0.12) !important;
+  color: #f8fafc !important;
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.65) !important;
+}
+
+[data-theme="dark"] .dropdown-item {
+  color: #cbd5e1 !important;
+}
+
+[data-theme="dark"] .dropdown-item:hover,
+[data-theme="dark"] .dropdown-item:focus {
+  background-color: #1e293b !important;
+  color: #ffffff !important;
+}
+
+[data-theme="dark"] .dropdown-divider {
+  border-color: rgba(255, 255, 255, 0.08) !important;
+}
+
+/* Navigation Pills & Segmented Tabs */
+[data-theme="dark"] .custom-saas-pills .nav-link {
+  background: #162032 !important;
+  border-color: rgba(255, 255, 255, 0.08) !important;
+  color: #94a3b8 !important;
+}
+
+[data-theme="dark"] .custom-saas-pills .nav-link:hover {
+  background: #1e293b !important;
+  color: #ffffff !important;
+  border-color: rgba(56, 189, 248, 0.3) !important;
+}
+
+[data-theme="dark"] .custom-saas-pills .nav-link.active {
+  background: #0d9488 !important;
+  color: #ffffff !important;
+  border-color: #0d9488 !important;
+  box-shadow: 0 4px 12px rgba(13, 148, 136, 0.4) !important;
+}
+
+/* Status Badges */
+[data-theme="dark"] .badge-status.success {
+  background: rgba(16, 185, 129, 0.18) !important;
+  color: #34d399 !important;
+  border: 1px solid rgba(16, 185, 129, 0.35) !important;
+}
+
+[data-theme="dark"] .badge-status.warning {
+  background: rgba(245, 158, 11, 0.18) !important;
+  color: #fbbf24 !important;
+  border: 1px solid rgba(245, 158, 11, 0.35) !important;
+}
+
+[data-theme="dark"] .badge-status.danger {
+  background: rgba(239, 68, 68, 0.18) !important;
+  color: #f87171 !important;
+  border: 1px solid rgba(239, 68, 68, 0.35) !important;
+}
+
+[data-theme="dark"] .badge-status.info {
+  background: rgba(6, 182, 212, 0.18) !important;
+  color: #38bdf8 !important;
+  border: 1px solid rgba(6, 182, 212, 0.35) !important;
+}
+
+[data-theme="dark"] .badge-status.teal {
+  background: rgba(13, 148, 136, 0.2) !important;
+  color: #2dd4bf !important;
+  border: 1px solid rgba(13, 148, 136, 0.38) !important;
+}
+
+[data-theme="dark"] .badge-status.dark {
+  background: #1e293b !important;
+  color: #94a3b8 !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+}
+
+/* Database Status Pills */
+[data-theme="dark"] .db-status-pill.mysql {
+  background: rgba(3, 105, 161, 0.2) !important;
+  color: #38bdf8 !important;
+  border-color: rgba(56, 189, 248, 0.35) !important;
+}
+
+[data-theme="dark"] .db-status-pill.demo {
+  background: rgba(180, 83, 9, 0.2) !important;
+  color: #fbbf24 !important;
+  border-color: rgba(245, 158, 11, 0.35) !important;
+}
+
+/* Secondary & Outline Buttons */
+[data-theme="dark"] .btn-light,
+[data-theme="dark"] .btn-outline-secondary,
+[data-theme="dark"] .btn-outline-dark {
+  background-color: #162032 !important;
+  color: #f8fafc !important;
+  border-color: #334155 !important;
+}
+
+[data-theme="dark"] .btn-light:hover,
+[data-theme="dark"] .btn-outline-secondary:hover,
+[data-theme="dark"] .btn-outline-dark:hover {
+  background-color: #1e293b !important;
+  color: #ffffff !important;
+  border-color: #475569 !important;
+}
+
+/* Stepper & Progress Tracks */
+[data-theme="dark"] .stepper-track {
+  background: #1e293b !important;
+}
+
+/* Toasts */
+[data-theme="dark"] .saas-toast {
+  background: #0f172a !important;
+  color: #f8fafc !important;
+  border: 1px solid rgba(255, 255, 255, 0.12) !important;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.65) !important;
+}
+
+/* Alerts */
+[data-theme="dark"] .alert-info {
+  background: rgba(6, 182, 212, 0.12) !important;
+  border-color: rgba(6, 182, 212, 0.3) !important;
+  color: #38bdf8 !important;
+}
+
+[data-theme="dark"] .alert-warning {
+  background: rgba(245, 158, 11, 0.12) !important;
+  border-color: rgba(245, 158, 11, 0.3) !important;
+  color: #fbbf24 !important;
+}
+
+[data-theme="dark"] .alert-danger {
+  background: rgba(239, 68, 68, 0.12) !important;
+  border-color: rgba(239, 68, 68, 0.3) !important;
+  color: #f87171 !important;
+}
+
+[data-theme="dark"] .alert-success {
+  background: rgba(16, 185, 129, 0.12) !important;
+  border-color: rgba(16, 185, 129, 0.3) !important;
+  color: #34d399 !important;
+}
+
+/* Settings Theme Choice Cards */
+.theme-choice-card {
+  border: 2px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 16px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  background: #ffffff;
+}
+
+.theme-choice-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+  border-color: #cbd5e1;
+}
+
+.theme-choice-card.active {
+  border-color: #0d9488 !important;
+  background: rgba(13, 148, 136, 0.06);
+  box-shadow: 0 0 0 3px rgba(13, 148, 136, 0.2);
+}
+
+[data-theme="dark"] .theme-choice-card {
+  border-color: rgba(255, 255, 255, 0.1);
+  background: #162032;
+  color: #f8fafc;
+}
+
+[data-theme="dark"] .theme-choice-card:hover {
+  border-color: rgba(56, 189, 248, 0.35);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.45);
+}
+
+[data-theme="dark"] .theme-choice-card.active {
+  border-color: #2dd4bf !important;
+  background: rgba(13, 148, 136, 0.18) !important;
+  box-shadow: 0 0 0 3px rgba(45, 212, 191, 0.25) !important;
+}
+
+/* Universal Inline-Style Harmonization in Dark Mode */
+[data-theme="dark"] [style*="color: #0f172a"],
+[data-theme="dark"] [style*="color:#0f172a"],
+[data-theme="dark"] [style*="color: #0f3460"],
+[data-theme="dark"] [style*="color:#0f3460"],
+[data-theme="dark"] [style*="color: #1e293b"],
+[data-theme="dark"] [style*="color:#1e293b"] {
+  color: #f8fafc !important;
+}
+
+[data-theme="dark"] [style*="color: #334155"],
+[data-theme="dark"] [style*="color:#334155"],
+[data-theme="dark"] [style*="color: #475569"],
+[data-theme="dark"] [style*="color:#475569"] {
+  color: #cbd5e1 !important;
+}
+
+[data-theme="dark"] [style*="background: #ffffff"],
+[data-theme="dark"] [style*="background:#ffffff"],
+[data-theme="dark"] [style*="background: white"],
+[data-theme="dark"] [style*="background:white"],
+[data-theme="dark"] [style*="background-color: #ffffff"],
+[data-theme="dark"] [style*="background-color:#ffffff"] {
+  background-color: #0f172a !important;
+}
+
+[data-theme="dark"] [style*="background: #f8fafc"],
+[data-theme="dark"] [style*="background:#f8fafc"],
+[data-theme="dark"] [style*="background: #f1f5f9"],
+[data-theme="dark"] [style*="background:#f1f5f9"] {
+  background-color: #162032 !important;
+}
+
+[data-theme="dark"] [style*="border: 1px solid #e2e8f0"],
+[data-theme="dark"] [style*="border:1px solid #e2e8f0"],
+[data-theme="dark"] [style*="border-bottom: 1px solid #e2e8f0"],
+[data-theme="dark"] [style*="border-bottom:1px solid #e2e8f0"],
+[data-theme="dark"] [style*="border-top: 1px solid #e2e8f0"],
+[data-theme="dark"] [style*="border-top:1px solid #e2e8f0"],
+[data-theme="dark"] [style*="border-color: #cbd5e1"],
+[data-theme="dark"] [style*="border-color:#cbd5e1"] {
+  border-color: rgba(255, 255, 255, 0.08) !important;
+}
+
+/* Studio Cards & Containers */
+[data-theme="dark"] .studio-card,
+[data-theme="dark"] .saas-card,
+[data-theme="dark"] .card,
+[data-theme="dark"] .rx-slip-card,
+[data-theme="dark"] .stock-stat-card,
+[data-theme="dark"] .timeline-event-card,
+[data-theme="dark"] #careGraphCard {
+  background-color: #0f172a !important;
+  background-image: none !important;
+  border-color: rgba(255, 255, 255, 0.08) !important;
+  color: #f8fafc !important;
+  box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.5) !important;
+}
+
+[data-theme="dark"] .patient-metric-tile {
+  background-color: #162032 !important;
+  border-color: rgba(255, 255, 255, 0.08) !important;
+  color: #f8fafc !important;
+}
+
+[data-theme="dark"] .timeline-dot {
+  background: #0f172a !important;
+  border: 3px solid #0d9488 !important;
+  box-shadow: 0 0 0 3px rgba(13, 148, 136, 0.35) !important;
+}
+
+[data-theme="dark"] .timeline-container::before {
+  background: rgba(255, 255, 255, 0.08) !important;
+}
+
+[data-theme="dark"] .studio-header-banner,
+[data-theme="dark"] .saas-card-header,
+[data-theme="dark"] .card-header {
+  background: #0b1322 !important;
+  background-image: none !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
+  color: #f8fafc !important;
+}
+
+[data-theme="dark"] .studio-header-banner h2,
+[data-theme="dark"] .studio-header-banner h4,
+[data-theme="dark"] .studio-header-banner h5,
+[data-theme="dark"] .studio-header-banner h6,
+[data-theme="dark"] .saas-card-title,
+[data-theme="dark"] .card-title {
+  color: #f8fafc !important;
+}
+
+/* Steppers & Prescriptions Studio Components */
+[data-theme="dark"] .stepper-nav,
+[data-theme="dark"] .med-builder-box,
+[data-theme="dark"] .rx-placeholder-box,
+[data-theme="dark"] .rx-doctor-box,
+[data-theme="dark"] .rx-patient-box {
+  background: #162032 !important;
+  background-image: none !important;
+  border-color: rgba(255, 255, 255, 0.08) !important;
+  color: #cbd5e1 !important;
+}
+
+[data-theme="dark"] .rx-med-item-pill {
+  background: #0f172a !important;
+  border-color: rgba(255, 255, 255, 0.08) !important;
+  color: #f8fafc !important;
+}
+
+[data-theme="dark"] .rx-watermark {
+  color: rgba(255, 255, 255, 0.03) !important;
+}
+
+[data-theme="dark"] .stepper-step {
+  color: #94a3b8 !important;
+}
+
+[data-theme="dark"] .stepper-step.active {
+  color: #38bdf8 !important;
+}
+
+[data-theme="dark"] .stepper-step-num {
+  background: #1e293b !important;
+  color: #94a3b8 !important;
+}
+
+[data-theme="dark"] .stepper-step.active .stepper-step-num {
+  background: #0284c7 !important;
+  color: #ffffff !important;
+}
+
+/* Filter Chips & Action Buttons */
+[data-theme="dark"] .filter-pill-chip,
+[data-theme="dark"] .filter-pill-btn,
+[data-theme="dark"] .btn-preset-chip,
+[data-theme="dark"] .btn-table-action,
+[data-theme="dark"] .btn-table-action-icon {
+  background-color: #162032 !important;
+  border-color: #334155 !important;
+  color: #cbd5e1 !important;
+}
+
+[data-theme="dark"] .filter-pill-chip:hover,
+[data-theme="dark"] .filter-pill-btn:hover,
+[data-theme="dark"] .btn-preset-chip:hover,
+[data-theme="dark"] .btn-table-action:hover,
+[data-theme="dark"] .btn-table-action-icon:hover {
+  background-color: #1e293b !important;
+  border-color: #475569 !important;
+  color: #ffffff !important;
+}
+
+[data-theme="dark"] .filter-pill-chip.active,
+[data-theme="dark"] .filter-pill-btn.active,
+[data-theme="dark"] .btn-preset-chip.active {
+  background-color: #0284c7 !important;
+  border-color: #38bdf8 !important;
+  color: #ffffff !important;
+  box-shadow: 0 2px 8px rgba(2, 132, 199, 0.35) !important;
+}
+
+[data-theme="dark"] .btn-table-action-readd {
+  background-color: rgba(13, 148, 136, 0.15) !important;
+  border-color: rgba(13, 148, 136, 0.35) !important;
+  color: #2dd4bf !important;
+}
+
+[data-theme="dark"] .btn-table-action-readd:hover {
+  background-color: #0d9488 !important;
+  color: #ffffff !important;
+}
+
+/* Studio Inputs & Selects */
+[data-theme="dark"] .studio-select,
+[data-theme="dark"] .studio-input {
+  background-color: #131c2e !important;
+  border-color: #334155 !important;
+  color: #f8fafc !important;
+}
+
+[data-theme="dark"] .studio-select:focus,
+[data-theme="dark"] .studio-input:focus {
+  border-color: #0d9488 !important;
+  box-shadow: 0 0 0 3px rgba(13, 148, 136, 0.25) !important;
+}
+
+/* Tables in Dark Mode: High-Contrast Clinical Elegance */
+[data-theme="dark"] .table-responsive {
+  background-color: transparent !important;
+}
+
+[data-theme="dark"] .saas-table,
+[data-theme="dark"] .table {
+  background-color: transparent !important;
+  color: #f1f5f9 !important;
+}
+
+[data-theme="dark"] .saas-table thead,
+[data-theme="dark"] .table thead,
+[data-theme="dark"] thead[style*="background"] {
+  background-color: #090e1a !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.09) !important;
+}
+
+[data-theme="dark"] .saas-table thead th,
+[data-theme="dark"] .table thead th,
+[data-theme="dark"] thead th {
+  background-color: #090e1a !important;
+  color: #94a3b8 !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.09) !important;
+  font-weight: 600 !important;
+}
+
+[data-theme="dark"] .saas-table tbody,
+[data-theme="dark"] .table tbody {
+  background-color: #0f172a !important;
+}
+
+[data-theme="dark"] .saas-table tbody tr,
+[data-theme="dark"] .table tbody tr,
+[data-theme="dark"] tr.patient-table-row,
+[data-theme="dark"] tr[style*="border-bottom"] {
+  background-color: #0f172a !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05) !important;
+  transition: background-color 0.15s ease;
+}
+
+[data-theme="dark"] .saas-table tbody tr:hover,
+[data-theme="dark"] .table tbody tr:hover,
+[data-theme="dark"] tr.patient-table-row:hover,
+[data-theme="dark"] .table-hover tbody tr:hover {
+  background-color: #162032 !important;
+}
+
+[data-theme="dark"] .saas-table td,
+[data-theme="dark"] .table td,
+[data-theme="dark"] .patient-table-row td {
+  color: #f1f5f9 !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05) !important;
+  background-color: transparent !important;
+}
+
+/* Links & Text inside Tables */
+[data-theme="dark"] .patient-table-row a.fw-bold,
+[data-theme="dark"] .saas-table a.fw-bold {
+  color: #38bdf8 !important;
+}
+
+[data-theme="dark"] .patient-table-row a.fw-bold:hover,
+[data-theme="dark"] .saas-table a.fw-bold:hover {
+  color: #7dd3fc !important;
+  text-decoration: underline !important;
+}
+
+/* Bootstrap Utility Overrides in Dark Mode */
+[data-theme="dark"] .bg-white {
+  background-color: #131c2e !important;
+  color: #f8fafc !important;
+}
+
+[data-theme="dark"] .bg-light {
+  background-color: #162032 !important;
+  color: #cbd5e1 !important;
+}
+
+[data-theme="dark"] .text-dark {
+  color: #f8fafc !important;
+}
+
+[data-theme="dark"] .text-muted {
+  color: #94a3b8 !important;
+}
+
+[data-theme="dark"] .border,
+[data-theme="dark"] .border-top,
+[data-theme="dark"] .border-bottom,
+[data-theme="dark"] .border-start,
+[data-theme="dark"] .border-end {
+  border-color: rgba(255, 255, 255, 0.08) !important;
+}
+
+/* Badges in Dark Mode */
+[data-theme="dark"] .badge.bg-white,
+[data-theme="dark"] a.badge.bg-white {
+  background-color: #162032 !important;
+  color: #cbd5e1 !important;
+  border: 1px solid #334155 !important;
+}
+
+[data-theme="dark"] a.badge.bg-white:hover {
+  background-color: #1e293b !important;
+  color: #38bdf8 !important;
+  border-color: #38bdf8 !important;
+}
+
+[data-theme="dark"] .badge.bg-light {
+  background-color: #162032 !important;
+  color: #cbd5e1 !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+}
+
+/* Specific Badges */
+[data-theme="dark"] .patient-table-row .badge[style*="background: #f1f5f9"],
+[data-theme="dark"] .badge[style*="background: #f1f5f9"] {
+  background: #162032 !important;
+  color: #38bdf8 !important;
+  border-color: #334155 !important;
+}
+
+[data-theme="dark"] .badge[style*="background: #e0f2fe"] {
+  background: rgba(3, 105, 161, 0.25) !important;
+  color: #38bdf8 !important;
+  border-color: rgba(56, 189, 248, 0.35) !important;
+}
+
+[data-theme="dark"] .badge[style*="background: #fce7f3"] {
+  background: rgba(190, 24, 93, 0.25) !important;
+  color: #f472b6 !important;
+  border-color: rgba(244, 114, 182, 0.35) !important;
+}
+
+[data-theme="dark"] .badge[style*="background: rgba(15, 52, 96"] {
+  background: rgba(2, 132, 199, 0.2) !important;
+  color: #38bdf8 !important;
+}
+
+[data-theme="dark"] .badge[style*="background: rgba(16, 185, 129"] {
+  background: rgba(16, 185, 129, 0.18) !important;
+  color: #34d399 !important;
+}
+
+[data-theme="dark"] .badge[style*="background: rgba(13, 148, 136"] {
+  background: rgba(13, 148, 136, 0.2) !important;
+  color: #2dd4bf !important;
+  border-color: rgba(13, 148, 136, 0.38) !important;
+}
+
+[data-theme="dark"] .badge[style*="background: rgba(14, 165, 233"] {
+  background: rgba(14, 165, 233, 0.18) !important;
+  color: #38bdf8 !important;
+  border-color: rgba(56, 189, 248, 0.35) !important;
+}
+
+/* Modals in Dark Mode */
+[data-theme="dark"] .modal-content {
+  background-color: #0f172a !important;
+  border-color: rgba(255, 255, 255, 0.12) !important;
+  color: #f8fafc !important;
+}
+
+[data-theme="dark"] .modal-header {
+  background: #0b1322 !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
+}
+
+[data-theme="dark"] .modal-footer {
+  background-color: #0b1322 !important;
+  border-top: 1px solid rgba(255, 255, 255, 0.08) !important;
+}
+
+[data-theme="dark"] .modal-body {
+  background-color: #0f172a !important;
+}
+
+/* Cards & Containers across Analytics, Supply Chain, and Drug Checker */
+[data-theme="dark"] .supplier-card,
+[data-theme="dark"] .kpi-stat-card,
+[data-theme="dark"] .interaction-kpi-card,
+[data-theme="dark"] .hospital-card,
+[data-theme="dark"] .chart-card,
+[data-theme="dark"] .stock-stat-card,
+[data-theme="dark"] .saas-card {
+  background-color: #0f172a !important;
+  background-image: none !important;
+  border-color: rgba(255, 255, 255, 0.08) !important;
+  color: #f8fafc !important;
+}
+
+[data-theme="dark"] .supplier-card h2,
+[data-theme="dark"] .hospital-card h2,
+[data-theme="dark"] .interaction-kpi-card h2,
+[data-theme="dark"] .kpi-stat-card h2,
+[data-theme="dark"] .kpi-stat-card .fw-bold,
+[data-theme="dark"] .interaction-kpi-card .kpi-val-main {
+  color: #f8fafc !important;
+}
+
+[data-theme="dark"] .interaction-kpi-card .kpi-val-red {
+  color: #f87171 !important;
+}
+
+[data-theme="dark"] .interaction-kpi-card .kpi-val-amber {
+  color: #fbbf24 !important;
+}
+
+[data-theme="dark"] .interaction-kpi-card .kpi-val-green,
+[data-theme="dark"] .stock-stat-card .kpi-green-text {
+  color: #34d399 !important;
+}
+
+[data-theme="dark"] .chart-card-header,
+[data-theme="dark"] .saas-card-header {
+  background: #0b1322 !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
+  color: #f8fafc !important;
+}
+
+[data-theme="dark"] .drug-pill-check .pill-body {
+  background: #131c2e !important;
+  border-color: rgba(255, 255, 255, 0.1) !important;
+  color: #cbd5e1 !important;
+}
+
+[data-theme="dark"] .drug-pill-check .pill-body:hover {
+  background: #1e293b !important;
+  border-color: #0d9488 !important;
+  color: #38bdf8 !important;
+}
+
+[data-theme="dark"] .drug-pill-check input[type="checkbox"]:checked + .pill-body {
+  background: #0d9488 !important;
+  border-color: #0d9488 !important;
+  color: #ffffff !important;
+  box-shadow: 0 4px 10px rgba(13, 148, 136, 0.4) !important;
+}
+
+[data-theme="dark"] .manufacturer-chip,
+[data-theme="dark"] .gst-badge {
+  background: #162032 !important;
+  border-color: rgba(255, 255, 255, 0.08) !important;
+  color: #cbd5e1 !important;
+}
+
+[data-theme="dark"] .pharmacy-bridge-box,
+[data-theme="dark"] .doctor-staff-chip {
+  background: #162032 !important;
+  border-color: rgba(255, 255, 255, 0.08) !important;
+  color: #f8fafc !important;
+}
+
+[data-theme="dark"] .pharmacy-bridge-box .fw-bold {
+  color: #f8fafc !important;
+}
+
+/* Universal Fallback for ANY card with inline background: #fff or #ffffff */
+[data-theme="dark"] [style*="background: #fff"],
+[data-theme="dark"] [style*="background:#fff"],
+[data-theme="dark"] [style*="background: #ffffff"],
+[data-theme="dark"] [style*="background:#ffffff"],
+[data-theme="dark"] [style*="background-color: #ffffff"],
+[data-theme="dark"] [style*="background-color:#ffffff"],
+[data-theme="dark"] [style*="background: white"],
+[data-theme="dark"] [style*="background:white"] {
+  background: #0f172a !important;
+  color: #f8fafc !important;
+}
+
+/* Universal Fallback for ANY light container with #f8fafc or #f1f5f9 */
+[data-theme="dark"] [style*="background: #f8fafc"],
+[data-theme="dark"] [style*="background:#f8fafc"],
+[data-theme="dark"] [style*="background: #f1f5f9"],
+[data-theme="dark"] [style*="background:#f1f5f9"] {
+  background: #162032 !important;
+  color: #cbd5e1 !important;
+}
+
+/* Graph Canvases in Both Light & Dark Modes: Deep Midnight Medical Visualization */
+#patient-vis-graph,
+#interaction-vis-container,
+#networkTopologyCanvas,
+.vis-network-canvas {
+  background: radial-gradient(ellipse at 50% 50%, #0f172a 0%, #030712 100%) !important;
+  color: #f8fafc !important;
+}
+
+
+
+
+
+
+
