@@ -7,9 +7,9 @@
 
 | Member Name | Role / Focus Area | GitHub Handle | Folder Contributed |
 | :--- | :--- | :--- | :--- |
-| **Harshit Sharma** *(Lead)* | Backend Architecture, Flask APIs & Bolt Driver | [@harshitsharma-6854](https://github.com/harshitsharma-6854) | 📁 [`backend/`](backend/) |
-| **Teammate 1** | Database Layer, Graph Schema & 22 Cypher Queries | *(Add Username)* | 📁 [`database/`](database/) |
-| **Teammate 2** | Frontend UI/UX, Glassmorphism & Vis.js Canvas | *(Add Username)* | 📁 [`frontend/`](frontend/) |
+| **Harshit Sharma** | Database Layer, Graph Schema & 25 Cypher Queries | [@harshitsharma-6854](https://github.com/harshitsharma-6854) | 📁 [`database/`](database/) |
+| **Sahana H** | Frontend UI/UX, Glassmorphism & Vis.js Interactive Canvas | [@sahanah621](https://github.com/sahanah621) | 📁 [`frontend/`](frontend/) |
+| **Sreya K J** | Backend Architecture, Flask REST APIs & Neo4j Bolt Driver | [@sreyakj](https://github.com/sreyakj) | 📁 [`backend/`](backend/) |
 
 ---
 

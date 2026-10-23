@@ -209,8 +209,8 @@ All endpoints are prefixed with `/api`:
 ## Contributors
 
 - **Sahana H** ([@sahanah621](https://github.com/sahanah621))
-- **Harshit Sharma**
-- **Sreya**
+- **Harshit Sharma** ([@harshitsharma-6854](https://github.com/harshitsharma-6854))
+- **Sreya K J** ([@sreyakj](https://github.com/sreyakj))
 
 ---
 
