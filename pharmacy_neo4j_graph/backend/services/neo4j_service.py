@@ -83,7 +83,9 @@ class Neo4jService:
             self.driver = GraphDatabase.driver(
                 self.uri,
                 auth=(self.user, self.password),
-                max_connection_lifetime=120
+                max_connection_lifetime=60,
+                connection_acquisition_timeout=15.0,
+                keep_alive=True
             )
             # Verify connectivity
             self.driver.verify_connectivity()
@@ -94,6 +96,19 @@ class Neo4jService:
             self.is_connected = False
             self.connection_error = str(e)
             logger.warning(f"[!] Neo4j connection failed ({e}). Operating in Demo Graph Fallback mode.")
+
+    def _reconnect(self):
+        """Forces clean re-initialization of the driver if AuraDB connection is dropped or defunct."""
+        try:
+            if self.driver:
+                try:
+                    self.driver.close()
+                except Exception:
+                    pass
+        except Exception:
+            pass
+        finally:
+            self._init_driver()
 
     def get_status(self):
         """Returns connection status for UI top bar and settings."""
@@ -620,42 +635,49 @@ class Neo4jService:
         start_time = time.time()
 
         if self.is_connected:
-            try:
-                with self._get_session() as session:
-                    res = session.run(query_str)
-                    records = []
-                    keys = list(res.keys())
-                    for r in res:
-                        row = {}
-                        for k in keys:
-                            val = r[k]
-                            # Handle Neo4j Node/Relationship/Date serialization
-                            row[k] = self._serialize_cypher_val(val)
-                        records.append(row)
-                    
-                    summary = res.consume()
-                    # If query was a SET or mutation without RETURN clause, provide clear feedback
-                    if len(records) == 0 and summary.counters.contains_updates:
-                        cnt = summary.counters
-                        keys = ['Status', 'PropertiesUpdated', 'NodesCreated', 'RelationshipsCreated']
-                        records = [{
-                            'Status': 'Graph updated successfully in Neo4j AuraDB',
-                            'PropertiesUpdated': cnt.properties_set,
-                            'NodesCreated': cnt.nodes_created,
-                            'RelationshipsCreated': cnt.relationships_created
-                        }]
-                    
-                    elapsed_ms = round((time.time() - start_time) * 1000, 2)
-                    return {
-                        'success': True,
-                        'columns': keys,
-                        'rows': records,
-                        'count': len(records),
-                        'execution_time_ms': elapsed_ms,
-                        'mode': 'live'
-                    }
-            except Exception as e:
-                return {'success': False, 'error': f"Neo4j Cypher Execution Error: {str(e)}"}
+            clean_query = query_str.rstrip(';').strip()
+            for attempt in range(2):
+                try:
+                    with self._get_session() as session:
+                        res = session.run(clean_query)
+                        records = []
+                        keys = list(res.keys())
+                        for r in res:
+                            row = {}
+                            for k in keys:
+                                val = r[k]
+                                # Handle Neo4j Node/Relationship/Date serialization
+                                row[k] = self._serialize_cypher_val(val)
+                            records.append(row)
+                        
+                        summary = res.consume()
+                        # If query was a SET or mutation without RETURN clause, provide clear feedback
+                        if len(records) == 0 and summary.counters.contains_updates:
+                            cnt = summary.counters
+                            keys = ['Status', 'PropertiesUpdated', 'NodesCreated', 'RelationshipsCreated']
+                            records = [{
+                                'Status': 'Graph updated successfully in Neo4j AuraDB',
+                                'PropertiesUpdated': cnt.properties_set,
+                                'NodesCreated': cnt.nodes_created,
+                                'RelationshipsCreated': cnt.relationships_created
+                            }]
+                        
+                        elapsed_ms = round((time.time() - start_time) * 1000, 2)
+                        return {
+                            'success': True,
+                            'columns': keys,
+                            'rows': records,
+                            'count': len(records),
+                            'execution_time_ms': elapsed_ms,
+                            'mode': 'live'
+                        }
+                except Exception as e:
+                    logger.warning(f"Neo4j Cypher attempt {attempt + 1} failed: {e}")
+                    if attempt == 0:
+                        logger.info("Attempting auto-reconnect to Neo4j AuraDB...")
+                        self._reconnect()
+                        continue
+                    return {'success': False, 'error': f"Neo4j Cypher Execution Error: {str(e)}"}
 
         # Offline Educational Response for Predefined Queries
         return self._simulate_fallback_cypher(query_str, start_time)
