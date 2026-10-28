@@ -115,7 +115,7 @@
                 data-id="{{ q.id }}"
                 data-name="{{ q.name | lower }}"
                 data-category="{{ q.category | lower }}"
-                onclick="executePresetDirectly('{{ q.id }}')">
+                onclick="selectPreset('{{ q.id }}')">
           {% if 'Update' in q.name or 'Mutation' in q.category %}
             <i class="fas fa-pen-to-square" style="color: #f59e0b; font-size: 11px;"></i>
           {% elif 'Degree' in q.category %}
@@ -279,5 +279,5 @@
 {% endblock %}
 
 {% block scripts %}
-<script src="{{ url_for('static', filename='js/cypher_playground.js') }}"></script>
+<script src="{{ url_for('static', filename='js/cypher_playground.js') }}?v=6.0"></script>
 {% endblock %}

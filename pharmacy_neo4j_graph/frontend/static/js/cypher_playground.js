@@ -22,11 +22,33 @@ document.addEventListener('DOMContentLoaded', function () {
     editor.addEventListener('input', updateCharCounter);
   }
 
-  // Auto-run initial query on load to populate the results panel immediately
-  if (editor && editor.value.trim().length > 0) {
-    runCypherQuery();
-  }
+  // Preset queries do not auto-run until user explicitly clicks Execute Cypher
+  resetResultCardPrompt('Default query loaded. Click Execute Cypher or press Ctrl+Enter to run.');
 });
+
+function resetResultCardPrompt(customMsg) {
+  const statusBadge = document.getElementById('result-status-badge');
+  const timingBadge = document.getElementById('result-timing-badge');
+  const thead = document.getElementById('cypher-result-thead');
+  const tbody = document.getElementById('cypher-result-tbody');
+  const noteBanner = document.getElementById('result-note-banner');
+
+  if (noteBanner) noteBanner.style.display = 'none';
+
+  if (statusBadge) {
+    statusBadge.className = 'badge';
+    statusBadge.style.cssText = 'background: #1e293b; color: #f59e0b; border: 1px solid #78350f; font-size: 11px;';
+    statusBadge.innerText = 'Ready to Execute';
+  }
+  if (timingBadge) {
+    timingBadge.innerHTML = '<span class="text-teal"><i class="fas fa-play me-1"></i>Click Execute Cypher</span>';
+  }
+  if (thead) thead.innerHTML = '';
+  if (tbody) {
+    const msg = customMsg || 'Preset loaded into editor. Click Execute Cypher or press Ctrl+Enter to run.';
+    tbody.innerHTML = `<tr><td colspan="10" class="text-center py-4 text-light opacity-75"><i class="fas fa-code me-2 text-warning"></i>${msg}</td></tr>`;
+  }
+}
 
 function updateCharCounter() {
   const editor = document.getElementById('cypher-editor');
@@ -66,6 +88,9 @@ function selectPreset(presetId) {
         activeBadgeTitle.innerText = titleEl.innerText.trim();
       }
     }
+
+    // Do NOT run automatically — show clean prompt indicating query is staged and ready
+    resetResultCardPrompt('Preset loaded into editor. Click Execute Cypher or press Ctrl+Enter to run.');
   } catch (err) {
     console.error('Error loading preset query:', err);
   }
@@ -103,6 +128,7 @@ function clearCypherEditor() {
     activeBadgeTitle.innerText = 'Custom Query';
   }
   document.querySelectorAll('.cypher-preset-item').forEach(el => el.classList.remove('active'));
+  resetResultCardPrompt('Editor cleared. Type a Cypher query or select a preset and click Execute Cypher.');
 }
 
 function copyCypherQuery() {
